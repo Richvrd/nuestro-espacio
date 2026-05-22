@@ -1,0 +1,120 @@
+nuestro-espacio/
+│
+├── app/                          # Next.js App Router (rutas = carpetas)
+│   ├── layout.tsx                # Layout raíz: sidebar + providers
+│   ├── page.tsx                  # Inicio (/) → redirige o carga home
+│   ├── globals.css               # Variables CSS globales, reset, tipografía
+│   │
+│   ├── (app)/                    # Grupo de rutas protegidas (requieren auth)
+│   │   ├── layout.tsx            # Layout con sidebar, aplica a todas las rutas del grupo
+│   │   ├── inicio/
+│   │   │   └── page.tsx
+│   │   ├── galeria/
+│   │   │   └── page.tsx
+│   │   ├── musica/
+│   │   │   └── page.tsx
+│   │   ├── cartas/
+│   │   │   ├── page.tsx          # Lista de cartas
+│   │   │   └── [id]/
+│   │   │       └── page.tsx      # Carta individual
+│   │   ├── juegos/
+│   │   │   └── page.tsx
+│   │   └── capsula/
+│   │       └── page.tsx
+│   │
+│   └── auth/                     # Rutas públicas
+│       ├── login/
+│       │   └── page.tsx
+│       └── callback/
+│           └── route.ts          # Callback OAuth de Supabase
+│
+├── modules/                      # ← El núcleo: cada módulo es autónomo
+│   ├── galeria/
+│   │   ├── components/           # Componentes exclusivos de galería
+│   │   │   ├── GaleriaGrid.tsx
+│   │   │   ├── FotoCard.tsx
+│   │   │   └── Lightbox.tsx
+│   │   ├── hooks/
+│   │   │   └── useFotos.ts       # Lógica de fetch, upload, delete
+│   │   ├── actions.ts            # Server actions de Next.js (CRUD a Supabase)
+│   │   ├── types.ts              # Tipos TypeScript del módulo
+│   │   └── index.ts              # Re-exporta lo que otros módulos pueden usar
+│   │
+│   ├── musica/
+│   │   ├── components/
+│   │   │   ├── Player.tsx
+│   │   │   └── Playlist.tsx
+│   │   ├── hooks/
+│   │   │   └── usePlayer.ts
+│   │   ├── actions.ts
+│   │   ├── types.ts
+│   │   └── index.ts
+│   │
+│   ├── cartas/
+│   │   ├── components/
+│   │   │   ├── CartasList.tsx
+│   │   │   ├── CartaReader.tsx
+│   │   │   └── EscribirCarta.tsx
+│   │   ├── hooks/
+│   │   │   └── useCartas.ts
+│   │   ├── actions.ts
+│   │   ├── types.ts
+│   │   └── index.ts
+│   │
+│   ├── juegos/
+│   │   ├── components/
+│   │   │   └── MemoryGame.tsx
+│   │   ├── hooks/
+│   │   │   └── useMemoryGame.ts
+│   │   ├── types.ts
+│   │   └── index.ts
+│   │
+│   └── capsula/
+│       ├── components/
+│       │   ├── CapsulasGrid.tsx
+│       │   └── NuevaCapsule.tsx
+│       ├── hooks/
+│       │   └── useCapsulas.ts
+│       ├── actions.ts
+│       ├── types.ts
+│       └── index.ts
+│
+├── components/                   # Componentes compartidos (UI genérico)
+│   ├── ui/
+│   │   ├── Button.tsx
+│   │   ├── Card.tsx
+│   │   ├── Modal.tsx
+│   │   ├── Toast.tsx
+│   │   └── EmptyState.tsx
+│   ├── layout/
+│   │   ├── Sidebar.tsx
+│   │   ├── NavItem.tsx
+│   │   └── ThemeToggle.tsx
+│   └── shared/
+│       └── StarField.tsx         # Animación del fondo (compartida)
+│
+├── lib/                          # Utilidades y configuración técnica
+│   ├── supabase/
+│   │   ├── client.ts             # Cliente Supabase para el browser
+│   │   ├── server.ts             # Cliente Supabase para Server Components
+│   │   └── middleware.ts         # Refresco de sesión en middleware
+│   ├── utils.ts                  # Helpers generales (formatFecha, cn, etc.)
+│   └── constants.ts              # Constantes de la app (nombres, fechas, etc.)
+│
+├── hooks/                        # Hooks globales (no pertenecen a un módulo)
+│   ├── useTheme.ts
+│   └── useCounter.ts             # El contador de tiempo juntos
+│
+├── styles/                       # Estilos compartidos más allá de globals.css
+│   ├── tokens.css                # Variables CSS (colores, tipografías, radios)
+│   └── animations.css            # Keyframes reutilizables
+│
+├── types/                        # Tipos globales y de Supabase
+│   ├── database.types.ts         # Auto-generado por Supabase CLI
+│   └── index.ts
+│
+├── middleware.ts                 # Protección de rutas (redirige si no hay sesión)
+├── next.config.ts
+├── tsconfig.json
+├── .env.local                    # NEXT_PUBLIC_SUPABASE_URL, ANON_KEY
+└── package.json
