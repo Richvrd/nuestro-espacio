@@ -30,10 +30,6 @@ export function GaleriaGrid({ initialPhotos, initialAlbums }: GaleriaGridProps) 
   const openPhoto = openPhotoId ? photos.find(p => p.id === openPhotoId) ?? null : null;
   const openAlbum = openAlbumId ? albums.find(a => a.id === openAlbumId) ?? null : null;
 
-  const handleDeletePhotos = async (ids: string[]) => {
-    for (const id of ids) await deleteFoto(id);
-  };
-
   const total = photos.length + albums.length;
 
   return (
@@ -83,7 +79,7 @@ export function GaleriaGrid({ initialPhotos, initialAlbums }: GaleriaGridProps) 
           album={openAlbum}
           onClose={() => setOpenAlbumId(null)}
           onEditAlbum={editAlbum}
-          onDeletePhotos={handleDeletePhotos}
+          onDeletePhoto={deleteFoto}
           onDeleteAlbum={deleteAlbum}
         />
       )}

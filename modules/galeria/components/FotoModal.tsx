@@ -52,15 +52,12 @@ export function FotoModal({ photo, onClose, onEdit, onDelete }: FotoModalProps) 
     onClose();
   };
 
-  // Solo cerrar al clicar backdrop si no hay acción en curso
-  const handleBackdrop = () => { if (!loading) onClose(); };
-
   const formattedDate = new Date(photo.created_at).toLocaleDateString('es-ES', {
     day: 'numeric', month: 'long', year: 'numeric',
   });
 
   return (
-    <div className="modal-backdrop" onClick={handleBackdrop}>
+    <div className="modal-backdrop">
       <div className={`foto-modal-box ${loading ? 'modal-loading' : ''}`} onClick={e => e.stopPropagation()}>
 
         <div className="foto-modal-img-wrap">

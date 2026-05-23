@@ -137,7 +137,7 @@ export function UploadModal({ onClose, onUploadPhoto, onUploadAlbum }: UploadMod
                 onChange={e => {
                   const selected = Array.from(e.target.files || []);
                   if (mode === 'photo') setFiles(selected.slice(0, 1));
-                  else setFiles(selected);
+                  else setFiles(selected.slice(0, 10));
                 }}
               />
             </div>
