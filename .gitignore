@@ -2,7 +2,6 @@
 
 # dependencies
 /node_modules
-/respaldos
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+notas_desarrollo.txt
+n-e.zip
