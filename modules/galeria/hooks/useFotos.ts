@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Photo, Album } from '../types';
+import { compressImage, compressImages } from '@/lib/compressImage';
 import {
   getGaleriaItems,
   insertPhoto,
@@ -38,7 +39,16 @@ export function useFotos(initialPhotos: Photo[], initialAlbums: Album[]) {
 
   const uploadFoto = useCallback(async (file: File, title: string, caption: string) => {
     try {
-      const url = await uploadToStorage(file);
+      // ── Comprimir antes de subir ───────────────────────────────────────────
+      // Reducimos la imagen a máx 1920px y calidad 0.82 en formato WebP.
+      // Una foto de 4MB típicamente queda en ~200-400KB.
+      const compressed = await compressImage(file, {
+        maxDimension: 1920,
+        quality: 0.82,
+        outputFormat: 'image/webp',
+      });
+
+      const url = await uploadToStorage(compressed);
       const result = await insertPhoto(url, title, caption);
       if (result.success) await refresh();
       return result;
@@ -49,13 +59,23 @@ export function useFotos(initialPhotos: Photo[], initialAlbums: Album[]) {
 
   const uploadAlbum = useCallback(async (files: File[], title: string, caption: string) => {
     try {
-      // Subir todos los archivos en paralelo desde el browser
+      // ── Comprimir todas las imágenes del álbum en paralelo ─────────────────
+      // Para álbumes usamos calidad un poco más baja (0.78) ya que
+      // se ven en miniaturas la mayoría del tiempo.
+      const compressedFiles = await compressImages(files, {
+        maxDimension: 1920,
+        quality: 0.78,
+        outputFormat: 'image/webp',
+      });
+
+      // Subir todos los archivos comprimidos en paralelo al Storage
       const uploaded = await Promise.all(
-        files.map(async (file) => ({
+        compressedFiles.map(async (file) => ({
           url: await uploadToStorage(file),
           name: file.name.replace(/\.[^.]+$/, ''),
         }))
       );
+
       const result = await insertAlbum(title, caption, uploaded);
       if (result.success) await refresh();
       return result;
