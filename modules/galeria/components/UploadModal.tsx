@@ -96,7 +96,8 @@ export function UploadModal({ onClose, onUploadPhoto, onUploadAlbum }: UploadMod
                 type="text"
                 value={caption}
                 onChange={e => setCaption(e.target.value)}
-                placeholder="opcional"
+                placeholder="opcional — máx. 500 caracteres"
+                maxLength={500}
                 disabled={loading}
               />
             </div>
