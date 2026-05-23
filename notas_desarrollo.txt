@@ -1,1 +1,0 @@
-* No se están ingresando los registros a la base de datos
