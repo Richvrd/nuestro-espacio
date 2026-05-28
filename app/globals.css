@@ -761,6 +761,8 @@ nav {
   color: var(--text);
   transition: border-color var(--trans-fast);
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 .form-input:focus { border-color: var(--gold); }
 .form-input::placeholder { color: var(--dimmed); }
@@ -1034,6 +1036,162 @@ nav {
   color: var(--dimmed);
 }
 
+/* ── FORM GROUP ─────────────────────────────────────────────────── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-value {
+  font-family: var(--body);
+  font-size: 0.9rem;
+  color: var(--gold);
+  padding: 0.5rem 0.75rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.write-form-divider {
+  height: 1px;
+  background: var(--border);
+  margin: -0.2rem 0 0.2rem;
+}
+
+/* ── LETTER CARD ────────────────────────────────────────────────── */
+.letter-card {
+  padding: 1.2rem 1.4rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  transition: all var(--trans-fast);
+  position: relative;
+}
+.letter-card:hover { border-color: var(--border-hi); }
+
+.letter-menu-below {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 10;
+  background: var(--card-high);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.letter-menu-below button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  transition: background var(--trans-fast);
+}
+
+.letter-menu-below button:hover {
+  background: var(--card);
+}
+
+.letter-menu-below .delete-opt {
+  color: var(--rose);
+}
+
+/* ── LETTER MODAL ───────────────────────────────────────────────── */
+.letter-modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  border-radius: calc(var(--radius) * 1.5);
+  width: min(620px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 2rem;
+  animation: slide-up 0.25s var(--ease);
+}
+
+.letter-reader-from {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.letter-reader-subject {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+.letter-reader-date {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.letter-reader-body {
+  font-family: var(--body);
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 2;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.letter-reader-body p { margin-bottom: 1.2em; }
+
+.letter-reader-sig {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--gold);
+  margin-top: 2rem;
+}
+
+/* ── WRITE MODAL ────────────────────────────────────────────────── */
+.write-modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  border-radius: calc(var(--radius) * 1.5);
+  width: min(540px, 94vw);
+  padding: 2rem;
+  animation: slide-up 0.25s var(--ease);
+}
+
+.write-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.write-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.letter-textarea {
+  resize: vertical;
+  min-height: 280px;
+  line-height: 1.8;
+}
+
 #toast-area {
   position: fixed;
   bottom: 2rem;
@@ -1242,6 +1400,13 @@ nav {
   /* AlbumModal */
   .album-modal-box { width: 96vw; max-height: 92vh; }
   .album-photos-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.6rem; padding: 1rem; }
+
+  /* Cartas */
+  .letter-modal-box { width: 96vw; padding: 1.5rem; }
+  .write-modal-box { width: 96vw; padding: 1.5rem; }
+  .letter-reader-subject { font-size: 1.3rem; }
+  .letter-reader-body { font-size: 0.9rem; }
+  .letter-textarea { min-height: 200px; }
 
   /* UploadModal */
   .modal-box { padding: 1.25rem; }

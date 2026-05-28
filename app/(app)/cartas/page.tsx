@@ -1,19 +1,11 @@
-import { EmptyState } from '@/components/ui/EmptyState';
+import { getLetters } from '@/modules/cartas/actions';
+import { CartasApp } from '@/modules/cartas/components/CartasApp';
 
-export default function CartasPage() {
+export default async function CartasPage() {
+  const letters = await getLetters();
   return (
     <div className="page active">
-      <div className="page-header">
-        <div>
-          <div className="page-subtitle">palabras del corazón</div>
-          <h1 className="page-title">Cartas</h1>
-        </div>
-      </div>
-      <EmptyState 
-        icon="💌" 
-        title="Este módulo estará disponible pronto" 
-        subtitle="próximamente podrás escribir y leer cartas" 
-      />
+      <CartasApp initialLetters={letters} />
     </div>
   );
 }
