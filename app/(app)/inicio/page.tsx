@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { COUPLE } from '@/lib/constants';
 import { OrbitCanvas } from '@/modules/inicio/components/OrbitCanvas';
-import { CounterDisplay } from '@/modules/inicio/components/CounterDisplay';
+import { HeroCounter } from '@/modules/inicio/components/HeroCounter';
 import { StatCard } from '@/modules/inicio/components/StatCard';
 import { WishButton } from '@/modules/inicio/components/WishButton';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -69,12 +69,12 @@ export default async function InicioPage() {
             {COUPLE.name1} <em>&</em> {COUPLE.name2}
           </h1>
           <p className="home-tagline">nuestro espacio · siempre</p>
+          <HeroCounter />
         </div>
       </div>
 
       <div className="home-body">
         <div className="home-grid">
-          <CounterDisplay />
           
           <StatCard icon="📸" value={stats.photos} label="fotos" />
           <StatCard icon="💌" value={stats.letters} label="cartas" />

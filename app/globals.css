@@ -143,7 +143,7 @@ body.light-mode {
   text-transform: uppercase;
 }
 
-.sidebar-counter-mini {
+.sidebar-subtitle {
   margin-top: 0.8rem;
   font-family: var(--mono);
   font-size: 0.65rem;
@@ -397,6 +397,78 @@ nav {
   letter-spacing: 0.45em;
   color: var(--muted);
   text-transform: uppercase;
+}
+
+.hero-counter {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.hero-counter-units {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.hcu {
+  text-align: center;
+}
+
+.hcu-val {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  font-weight: 400;
+  color: var(--gold);
+  line-height: 1;
+  display: block;
+  text-shadow: 0 0 20px color-mix(in srgb, var(--gold) 30%, transparent);
+}
+
+.hcu-val--sm {
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  display: inline;
+  text-shadow: none;
+}
+
+.hcu-label {
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.hcu-sep {
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--dimmed);
+  align-self: center;
+  line-height: 1;
+  margin-top: 0.25rem;
+}
+
+.hcu-sep--sm {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+}
+
+.hero-counter-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.7;
+}
+
+.hero-counter-since {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-top: 0.3rem;
 }
 
 .home-body {
@@ -1323,6 +1395,36 @@ nav {
   100% { transform: scale(2.5); opacity: 0; }
 }
 
+/* ── SHOOTING STARS ──────────────────────────────────────────────── */
+.shooting-star {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+  width: var(--len);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,245,200,0.9));
+  top: var(--y);
+  left: -200px;
+  transform: rotate(var(--angle));
+  animation: shoot var(--dur) ease-out forwards;
+}
+
+.shooting-star::after {
+  content: '';
+  position: absolute;
+  right: 0; top: -1px;
+  width: 4px; height: 3px;
+  border-radius: 50%;
+  background: rgba(255,245,200,0.9);
+  box-shadow: 0 0 6px 2px rgba(255,230,100,0.4);
+}
+
+@keyframes shoot {
+  0%   { transform: rotate(var(--angle)) translateX(0);     opacity: 0; }
+  5%   { opacity: 1; }
+  100% { transform: rotate(var(--angle)) translateX(130vw); opacity: 0; }
+}
+
 /* ── SPINNER / LOADING ───────────────────────────────────────────── */
 .spinner {
   display: inline-block;
@@ -1359,6 +1461,7 @@ nav {
   #main { padding-bottom: 70px; height: calc(100vh - 70px); }
   .page { padding: 1.5rem; }
   .home-grid { grid-template-columns: 1fr; }
+  .hero-counter-units { gap: 0.8rem; }
   .counter-card { flex-direction: column; align-items: flex-start; }
   .home-title { font-size: 2rem; }
 

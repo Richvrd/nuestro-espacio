@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { COUPLE, formatDate } from '@/lib/constants';
-import { useCounter } from '@/hooks/useCounter';
 import { ThemeToggle } from './ThemeToggle';
 
 const navItems = [
@@ -15,13 +14,8 @@ const navItems = [
   { href: '/capsula', label: 'Cápsula', icon: '⏳', section: 'extras' },
 ];
 
-function formatCounterMini(counter: { days: number; hours: number; minutes: number }) {
-  return `${counter.days} d · ${counter.hours} h · ${counter.minutes} m`;
-}
-
 export function Sidebar() {
   const pathname = usePathname();
-  const counter = useCounter();
 
   return (
     <aside id="sidebar">
@@ -32,9 +26,7 @@ export function Sidebar() {
         <div className="sidebar-since">
           desde {formatDate(COUPLE.startDate).split(',')[0].replace(' de ', ' ')}
         </div>
-        <div className="sidebar-counter-mini">
-          {formatCounterMini(counter)}
-        </div>
+        <div className="sidebar-subtitle">Nuestro Espacio</div>
       </div>
 
       <nav>
