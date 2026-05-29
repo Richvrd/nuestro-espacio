@@ -73,6 +73,7 @@ export default async function InicioPage() {
         </div>
       </div>
 
+      {/*
       <div className="home-body">
         <div className="home-grid">
           
@@ -153,6 +154,7 @@ export default async function InicioPage() {
           <WishButton />
         </div>
       </div>
+      */}
     </div>
   );
 }

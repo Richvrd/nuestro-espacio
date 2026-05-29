@@ -31,8 +31,9 @@ export function OrbitCanvas() {
 
       const cx = W / 2;
       const cy = H / 2;
-      const rx = W * 0.2;
-      const ry = H * 0.22;
+      const size = Math.min(W, H);
+      const rx = size * 0.2;
+      const ry = size * 0.2;
 
       // Faint orbit rings
       [[rx * 1.6, ry * 1.6, 0.03], [rx, ry, 0.07], [rx * 0.5, ry * 0.5, 0.04]].forEach(([rxi, ryi, a]) => {

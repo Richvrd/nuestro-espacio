@@ -8,13 +8,15 @@ function pad(num: number, size: number = 2): string {
 }
 
 export function HeroCounter() {
-  const { years, months, days, hours, minutes, seconds } = useCounter();
+  const { years, months, weeks, days, hours, minutes, seconds } = useCounter();
+
+  const totalDays = weeks * 7 + days;
 
   const sinceDate = COUPLE.startDate.toLocaleDateString('es-ES', {
-    day: 'numeric', month: 'short', year: 'numeric',
+    day: 'numeric', month: 'short', year: 'numeric', timeZone: 'America/Santiago',
   }).replace(/\.$/, '');
   const sinceTime = COUPLE.startDate.toLocaleTimeString('es-ES', {
-    hour: 'numeric', minute: '2-digit',
+    hour: 'numeric', minute: '2-digit', timeZone: 'America/Santiago',
   });
 
   return (
@@ -30,10 +32,10 @@ export function HeroCounter() {
           <span className="hcu-label">meses</span>
         </div>
         <span className="hcu-sep">:</span>
-        <div className="hcu">
-          <span className="hcu-val">{pad(days)}</span>
-          <span className="hcu-label">días</span>
-        </div>
+          <div className="hcu">
+            <span className="hcu-val">{pad(totalDays)}</span>
+            <span className="hcu-label">días</span>
+          </div>
       </div>
       <div className="hero-counter-sub">
         <span className="hcu-val hcu-val--sm">{pad(hours)}</span>
