@@ -1,19 +1,11 @@
-import { EmptyState } from '@/components/ui/EmptyState';
+import { getCapsulas } from '@/modules/capsula/actions';
+import { CapsulasApp } from '@/modules/capsula/components/CapsulasApp';
 
-export default function CapsulaPage() {
+export default async function CapsulaPage() {
+  const capsulas = await getCapsulas();
   return (
     <div className="page active">
-      <div className="page-header">
-        <div>
-          <div className="page-subtitle">mensajes del futuro</div>
-          <h1 className="page-title">Cápsula del tiempo</h1>
-        </div>
-      </div>
-      <EmptyState 
-        icon="⏳" 
-        title="Este módulo estará disponible pronto" 
-        subtitle="próximamente podrás crear cápsulas para el futuro" 
-      />
+      <CapsulasApp initialCapsulas={capsulas} />
     </div>
   );
 }

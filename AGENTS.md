@@ -6,7 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 ## Project
-Private couple's web app (Sarai ♥ Ricardo). All UI text is in Spanish. Features: photo gallery/albums, love letters, shared music playlist, memory game, time capsule, and a "time together" counter.
+Private couple's web app (Sarai ♥ Ricardo). All UI text is in Spanish. Features: photo gallery/albums, love letters, memory game, time capsule, and a "time together" counter.
 
 ## Commands
 - `npm run dev` — dev server on port 3000
@@ -20,7 +20,7 @@ Private couple's web app (Sarai ♥ Ricardo). All UI text is in Spanish. Feature
 - **Supabase**: `@supabase/ssr` for cookie-based auth; clients at `lib/supabase/client.ts` (browser) and `lib/supabase/server.ts` (server). Auth: login page + OAuth callback. Route protection in `(app)/` layout.
 - **Env**: `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local`
 - **Path alias**: `@/*` maps to project root
-- **Dev LAN access**: `allowedDevOrigins: ['192.168.0.12']` in `next.config.ts`
+- **Dev LAN access**: `allowedDevOrigins: ['192.168.0.12', '*']` in `next.config.ts`
 - **Server action limit**: `bodySizeLimit: '10mb'` (for image uploads)
 - **Image compression**: client-side Canvas API at `lib/compressImage.ts` (WebP, max 1920px, ~200-400KB output). Falls back to original on error.
 - **Styling**: Custom CSS in `app/globals.css` (CSS custom properties — `--gold`, `--rose`, `--surface`, etc.; serif/body/mono font stacks). Tailwind is installed but unused in templates.
@@ -31,9 +31,10 @@ Each feature lives in `modules/<name>/` with `components/`, `hooks/`, `actions.t
 | Module | Status | Key files |
 |--------|--------|-----------|
 | `galeria` | Complete | types.ts, actions.ts (CRUD), useFotos.ts, GaleriaGrid/FotoCard/AlbumCard/FotoModal/AlbumModal/UploadModal/Lightbox |
-| `inicio` | Has components | OrbitCanvas, CounterDisplay, StatCard, WishButton (used in `app/(app)/inicio/page.tsx`) |
-| `capsula` | Scaffold only | Empty `components/` + `hooks/` |
-| `cartas` | Scaffold only | Empty `components/` + `hooks/` |
+| `inicio` | Has components | OrbitCanvas, HeroCounter, CounterDisplay, StatCard, WishButton (used in `app/(app)/inicio/page.tsx`) |
+| `capsula` | Complete | types.ts, actions.ts (CRUD + encryption), useCapsulas.ts, CapsulasApp/CapsulaCard/NuevaCapsulaModal/ConfirmModal/SealedModal/ReaderModal/CosmosModal |
+| `cartas` | Complete | types.ts, actions.ts (CRUD), CartasApp, LetterReaderModal, WriteLetterModal |
+| `timeline` | Complete | types.ts, actions.ts (CRUD), useMoments.ts, TimelineApp/YearFilter/TimelineView/MomentCard/MomentNode/AddBetweenButton/YearSeparator/MomentModal/DeleteConfirmModal |
 | `musica` | Scaffold only | Empty `components/` + `hooks/` |
 | `juegos` | Scaffold only | Empty `components/` + `hooks/` |
 
@@ -41,3 +42,4 @@ Each feature lives in `modules/<name>/` with `components/`, `hooks/`, `actions.t
 - `estructura.txt` describes the **target** architecture — some listed files (`middleware.ts`, `lib/utils.ts`, `styles/animations.css`, `types/database.types.ts`, `hooks/useTheme.ts`, `modules/*/index.ts`) don't exist yet and need to be built.
 - No barrel `index.ts` files exist — import directly from subpaths.
 - No middleware, no CI, no pre-commit hooks, no tests.
+- **Every visual modification must also be made responsive.** Check and adapt layouts for <768px screens (sidebar becomes bottom nav, grids collapse to single column, modals use 96vw width). Add/update CSS in `@media (max-width: 768px)` block in `app/globals.css`.

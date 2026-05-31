@@ -1,0 +1,536 @@
+# NUESTRO ESPACIO — Proyecto completo
+
+Web app privada de pareja (Sarai ♥ Ricardo). Todo el UI en español.
+Creada con Next.js 16.2.6 + React 19.2.4 + Supabase + CSS personalizado + Tailwind v4 (no usado en templates).
+
+---
+
+## 1. IDEA GENERAL
+
+Aplicación web privada para una pareja, con:
+- **Galería de fotos/álbumes** — subir fotos, crear álbumes, lightbox
+- **Cartas de amor** — escribir, leer, editar, eliminar cartas
+- **Lista de reproducción musical** — compartir canciones (scaffold)
+- **Juego de memoria** — juego de parejas con temática propia (scaffold)
+- **Cápsula del tiempo** — mensajes sellados hasta una fecha futura (scaffold)
+- **Contador de tiempo juntos** — años:meses:días · horas:min:seg desde el inicio de la relación
+
+Autenticación con Supabase (email + OAuth). Diseño dark-mode con paleta dorada/rosada.
+
+---
+
+## 2. STACK TÉCNICO
+
+| Capa | Tecnología |
+|------|-----------|
+| Framework | Next.js 16.2.6 (App Router) |
+| UI | React 19.2.4 |
+| Estilos | CSS personalizado en `app/globals.css` + Tailwind CSS v4 (instalado pero NO usado en componentes) |
+| Base de datos | Supabase (PostgreSQL) |
+| Auth | @supabase/ssr (cookie-based) |
+| Tipografía | Playfair Display (serif), Lora (body), IBM Plex Mono (mono) — Google Fonts |
+| Path alias | `@/*` → raíz del proyecto |
+| Transpilación | TypeScript 5, ES2017 target, bundler moduleResolution |
+
+---
+
+## 3. ESTRUCTURA DE ARCHIVOS
+
+```
+nuestro-espacio/
+├── app/
+│   ├── layout.tsx              # Layout raíz: HTML lang=es, Google Fonts, globals.css
+│   ├── page.tsx                # Redirige a /inicio
+│   ├── globals.css             # ÚNICO archivo de estilos (~1517 líneas)
+│   ├── (app)/                  # Grupo protegido (requiere auth)
+│   │   ├── layout.tsx          # Sidebar + StarField + ShootingStars + ToastProvider
+│   │   ├── inicio/page.tsx     # Hero con OrbitCanvas + HeroCounter (stats comentadas)
+│   │   ├── galeria/page.tsx    # Galería completa con fotos y álbumes
+│   │   ├── cartas/page.tsx     # Lista de cartas
+│   │   ├── musica/page.tsx     # Scaffold "próximamente"
+│   │   ├── juegos/page.tsx     # Scaffold "próximamente"
+│   │   └── capsula/page.tsx    # Scaffold "próximamente"
+│   └── auth/                   # Rutas públicas (login + callback OAuth)
+│       ├── login/page.tsx
+│       └── callback/route.ts
+├── modules/
+│   ├── galeria/                # COMPLETO
+│   │   ├── types.ts, actions.ts
+│   │   ├── hooks/useFotos.ts
+│   │   └── components/ (GaleriaGrid, FotoCard, AlbumCard, FotoModal, AlbumModal, UploadModal, Lightbox)
+│   ├── cartas/                 # COMPLETO
+│   │   ├── types.ts, actions.ts
+│   │   └── components/ (CartasApp, LetterReaderModal, WriteLetterModal)
+│   ├── inicio/                 # Componentes sueltos (falta hook/actions/types)
+│   │   └── components/ (OrbitCanvas, HeroCounter, CounterDisplay, StatCard, WishButton)
+│   ├── capsula/                # SCAFFOLD (vacíos)
+│   ├── juegos/                 # SCAFFOLD
+│   └── musica/                 # SCAFFOLD
+├── components/
+│   ├── layout/ (Sidebar, ThemeToggle)
+│   ├── shared/ (StarField, ShootingStars)
+│   └── ui/ (Button, Card, EmptyState, Toast)
+├── hooks/useCounter.ts         # Contador global en tiempo real
+├── lib/
+│   ├── constants.ts            # COUPLE (nombres, startDate), formatDate, getMonthYear
+│   ├── compressImage.ts        # Compresión WebP vía Canvas API
+│   └── supabase/ (client.ts, server.ts)
+├── next.config.ts
+├── package.json
+├── tsconfig.json
+└── styles/tokens.css           # DUPLICADO de variables CSS (no usado; todo en globals.css)
+```
+
+---
+
+## 4. ESTILOS GLOBALES (app/globals.css)
+
+### 4.1 Variables CSS (Custom Properties)
+
+```css
+:root {
+  --bg:        #0c0b10;
+  --surface:   #131219;
+  --card:      #1a1924;
+  --card-high: #201f2e;
+  --border:    rgba(255,255,255,0.07);
+  --border-hi: rgba(201,169,110,0.25);
+  --text:      #f0ece0;
+  --muted:     #7a7585;
+  --dimmed:    #3e3a4a;
+  --gold:      #c9a96e;
+  --gold-dim:  #7a6035;
+  --rose:      #b8756a;
+  --rose-dim:  #6b3d38;
+  --teal:      #5a9ba5;
+  --serif:     'Playfair Display', Georgia, serif;
+  --body:      'Lora', Georgia, serif;
+  --mono:      'IBM Plex Mono', monospace;
+  --sidebar:   220px;
+  --radius:    10px;
+  --ease:      cubic-bezier(0.25, 0, 0, 1);
+  --trans-fast: 0.15s var(--ease);
+  --trans-med:  0.3s var(--ease);
+  --trans-slow: 0.6s var(--ease);
+}
+```
+
+**Modo claro**: clase `.light-mode` en body — sobreescribe surface/card/text/muted/dimmed/border.
+
+### 4.2 Estructura de Layout
+
+- **`#sidebar`**: 220px fijo, flex column con .sidebar-top (nombres, "desde", subtítulo), nav (nav-items con secciones), .sidebar-bottom (ThemeToggle, status dot).
+- **`#app`**: flex row, height 100vh, z-index 1.
+- **`#main`**: flex: 1, overflow-y: auto, contiene `.page` (display:none / .active display:block, min-height 100vh, animación page-in).
+- **`#page-home`**: padding 0, contiene `.home-hero` (100vh, flex center, overflow:hidden).
+
+### 4.3 Hero (Home)
+
+- `.home-hero`: height 100vh, flex center, overflow hidden.
+- `.home-title`: serif, clamp(2.5rem,5vw,4.5rem), nombre1 `<em>&</em>` nombre2.
+- `.home-tagline`: mono, 0.65rem, letter-spacing 0.45em, uppercase, "nuestro espacio · siempre".
+- `.hero-counter`: flex column, gap 0.6rem, margin-top 5rem (separado del título).
+  - `.hero-counter-units`: flex row, gap 1.2rem.
+  - `.hcu-val`: serif, gold, clamp(2.8rem,6vw,4.5rem), text-shadow glow.
+  - `.hcu-label`: mono, 0.5rem, uppercase, muted.
+  - `.hcu-sep`: serif, dimmed, align-self center, margin-top 0.25rem, clamp(1.4rem,3vw,2rem).
+  - `.hero-counter-sub`: flex, opacity 0.7, hour:min:seg más pequeños.
+  - `.hero-counter-since`: mono, 0.55rem, gold, letter-spacing 0.15em.
+
+### 4.4 Componentes UI
+
+- `.btn`: inline-flex, border 1px, border-radius var(--radius), padding 0.6rem 1.4rem, mono, gold text.
+  - `.btn-primary`: gold bg, dark text.
+  - `.btn-ghost`: transparente con hover border-hi.
+- `.card`: bg var(--card), border 1px var(--border), border-radius var(--radius), padding 1.5rem, hover border-hi.
+- `.modal-backdrop`: fixed inset 0, bg rgba(0,0,0,0.6), backdrop-blur-sm, z-index 1000, flex center.
+- `.modal-box`: bg var(--card), border 1px var(--border), border-radius var(--radius), max-width 600px, width 90vw, padding 2rem.
+- `.modal-header`: flex between, align center, margin-bottom 1.5rem; title serif + close button.
+
+### 4.5 Módulo Galería
+
+- `.gallery-grid`: CSS grid, repeat(auto-fill, minmax(180px, 1fr)), gap 1rem.
+- `.photo-card`: aspect-ratio 1, overflow hidden, border-radius, img cover, overlay en hover (caption), stagger rotate aleatorio.
+- `.album-stack`: cards superpuestos (front/back) con rotate.
+- `.upload-zone`: dashed border 2px gold-dim, padding 3rem, hover border gold.
+- `.foto-modal-box`: flex row (img 60% + sidebar 40%), max-height 85vh.
+- `.album-modal-box`: width 640px, photos grid interno.
+- `.lightbox-overlay`: fixed inset 0, z-index 1100, bg negro, flex center; img max 90vw/90vh.
+
+### 4.6 Módulo Cartas
+
+- `.letter-card`: card grid con subject/from/date, cursor pointer.
+- `.letter-menu-below`: position absolute, top 100%, right 0, flex column, bg card-high, border, z-index 10.
+- `.letter-modal-box`: max-width 680px, width 90vw, padding 2.5rem.
+- `.letter-reader-subject`: serif, font-size 1.8rem, gold.
+- `.letter-reader-from`: mono, 0.7rem, muted.
+- `.letter-reader-body`: body font, line-height 1.8, whitespace pre-line.
+- `.write-modal-box`: max-width 580px.
+- `.write-form`: flex column, gap 1.5rem.
+- `.form-group`: label mono + select/input border-bottom gold.
+- `.write-form-divider`: hr con gold/transparent gradient.
+- `.letter-textarea`: 100%, min-height 250px, bg transparent, border-bottom gold.
+
+### 4.7 Elementos Decorativos
+
+- **Noise overlay**: `body::before` con SVG fractal noise, opacity 0.04, z-index 9998, pointer-events none.
+- **StarField**: fixed inset 0, z-index 0, positiona estrellas aleatorias con animación twinkle (`@keyframes tw`).
+- **ShootingStars**: divs fijos z-index 1, animación `@keyframes shoot` (3 etapas), se autodestruyen tras 2200ms. Lanzados por 3 cadenas setTimeout independientes.
+
+### 4.8 Responsive (max-width: 768px)
+
+- Sidebar → bottom nav bar fija (50px, z-index 50).
+- Nav items → flex row, icon + label column.
+- `.sidebar-top`, `.sidebar-bottom`, `.nav-section` → display none.
+- `#main` → padding-bottom 70px, height calc(100vh - 70px).
+- `.page` → padding 1.5rem.
+- `.home-grid` → 1 column.
+- `.gallery-grid` → minmax(140px, 1fr), gap 0.8rem.
+- Modals (foto, album, carta, write) → width 96vw, overflow-y auto.
+- `.foto-modal-box` → column layout.
+- `.letter-reader-subject` → 1.3rem.
+- `.letter-textarea` → min-height 200px.
+
+---
+
+## 5. MÓDULO GALERÍA (completo)
+
+### 5.1 types.ts
+
+```typescript
+export interface Photo {
+  id: string; url: string | null; title: string; caption: string;
+  date: string; uploaded_by: string; album_id: string | null;
+  created_at: string; emoji?: string; bg_gradient?: string;
+}
+export interface Album {
+  id: string; title: string; caption: string; created_at: string;
+  photos: Photo[];
+}
+export type GaleriaItem =
+  | { type: 'photo'; data: Photo }
+  | { type: 'album'; data: Album };
+```
+
+### 5.2 actions.ts (server actions)
+
+- `getGaleriaItems()` → Promise<GaleriaItem[]> — fetches photos (sin album_id) + albums (con sus photos).
+- `insertPhoto(url, title, caption)` → inserta foto en Supabase.
+- `insertAlbum(title, caption, photoUrls)` → crea album + fotos en transacción.
+- `updatePhoto(id, title, caption)` → update.
+- `updateAlbum(id, title, caption)` → update.
+- `deletePhoto(id)` → elimina de Storage + DB; si album queda vacío lo borra automáticamente.
+- `deleteAlbum(id)` → elimina album + todas sus fotos (Storage + DB).
+
+### 5.3 useFotos.ts (hook)
+
+Estado: `{ items: GaleriaItem[], loading, uploading }`
+
+- `uploadFoto(file, title, caption)` → comprime con compressImage, sube a Supabase Storage, inserta DB, refresh.
+- `uploadAlbum(title, caption, files)` → comprime todas (quality 0.78), sube en paralelo, crea album + fotos, refresh.
+- `editFoto(id, title, caption)` / `editAlbum(id, title, caption)` → optimista + server action.
+- `deleteFoto(id)` / `deleteAlbum(id)` → optimista + server action.
+- `refresh()` → refetch getGaleriaItems().
+
+### 5.4 Componentes
+
+| Componente | Props | Función |
+|-----------|-------|---------|
+| GaleriaGrid | items, onRefresh | Grid principal con modales y UploadModal |
+| FotoCard | photo, onClick | Thumbnail con overlay, placeholder emoji+gradient |
+| AlbumCard | album, onClick | Stack visual con primeras 2 fotos |
+| FotoModal | photo, onClose, onEdit, onDelete | Modal detalle con sidebar, tres-puntos, edición inline |
+| AlbumModal | album, onClose, onEdit, onDelete | Grid de fotos + expand view + editar/eliminar |
+| UploadModal | onClose, onUpload | Wizard: seleccionar modo (foto/álbum) + formulario + drop files |
+| Lightbox | photos, index, onClose | Fullscreen con prev/next, teclado (Escape, flechas) |
+
+---
+
+## 6. MÓDULO CARTAS (completo)
+
+### 6.1 types.ts
+
+```typescript
+export interface Letter {
+  id: string; from_name: string; to_name: string;
+  subject: string; body: string; unread: boolean | null;
+  created_at: string;
+}
+```
+
+### 6.2 actions.ts (server actions)
+
+- `getLetters()` → Promise<Letter[]> — todas ordenadas por created_at DESC.
+- `insertLetter(from_name, to_name, subject, body)` → insert + `.select().single()` (retorna la letter).
+- `updateLetter(id, subject, body)` → update + `.select().single()`.
+- `deleteLetter(id)` → delete por id.
+
+Todas llaman `revalidatePath('/cartas')`.
+
+### 6.3 Componentes
+
+| Componente | Props | Función |
+|-----------|-------|---------|
+| CartasApp | initialLetters | Grid + empty state + modales + estado local optimista |
+| LetterReaderModal | letter, onClose, onEdit, onDelete | Modal con contenido + menú tres-puntos (editar/eliminar) |
+| WriteLetterModal | onClose, onSaved, editLetter? | Modal formulario crear/editar: Para (select), Asunto (input), Carta (textarea) |
+
+**CartasApp** mantiene estado local de letters (useState). Operaciones optimistas:
+- Al crear: insertLetter → respuesta con letter → setLetters([newLetter, ...letters])
+- Al eliminar: setLetters optimista + deleteLetter en servidor
+- Al editar: abre WriteLetterModal en modo edición
+
+**WriteLetterModal**:
+- Select "Para" con opciones Sarai / Ricardo (de COUPLE.name1/name2)
+- Input "Asunto" 100% width
+- Textarea "Carta" 100% width, min-height 250px
+- Botones: Cancelar / Enviar (o Guardar si edición)
+- Layout: .form-group > label + .form-value > input/select, .write-form-divider (hr gradiente)
+
+**LetterReaderModal**:
+- Subject grande serif gold
+- "de [nombre]" mono muted
+- Cuerpo con párrafos separados por blank line
+- Fecha abajo en mono dimmed
+- Botón tres-puntos (⋮) abre menú flotante .letter-menu-below con Editar/Eliminar
+- Solo se cierra con X button (backdrop no-cerrar)
+
+---
+
+## 7. MÓDULO INICIO (componentes sueltos)
+
+### 7.1 HeroCounter.tsx (cliente)
+
+Hook `useCounter()` retorna años/meses/semanas/días/horas/min/seg desde COUPLE.startDate. Se actualiza cada 1s.
+
+Display:
+- Línea 1: años : meses : días (grande, gold, serif)
+- Línea 2: horas : min : seg (pequeño, opaco)
+- Línea 3: fecha de inicio formateada en Chile timezone
+
+Los días mostrados son `weeks * 7 + days` (total días después de meses).
+
+### 7.2 OrbitCanvas.tsx (cliente)
+
+Canvas animado con requestAnimationFrame:
+- 3 elipses orbitales concéntricas (rx=ry=Math.min(W,H)*0.2 → círculos perfectos)
+- 2 estrellas orbitando (una gold #c9a96e, una rose #b8756a) con estela y glow radial
+- Punto central con glow y pulso
+
+### 7.3 CounterDisplay.tsx (cliente)
+
+Versión Card del contador con años·meses·semanas·días·horas·min·seg (no se usa actualmente en página de inicio).
+
+### 7.4 StatCard.tsx
+
+Card simple: icono + valor grande (serif) + label (mono).
+
+### 7.5 WishButton.tsx
+
+Botón "te amo" con corazón animado (wave) y contador de wishes. Muestra "yo también..." feedback.
+
+---
+
+## 8. COMPONENTES COMPARTIDOS
+
+### 8.1 Sidebar
+
+```tsx
+- .sidebar-top: COUPLE.name1 <em>&</em> COUPLE.name2, "desde [fecha]", "Nuestro Espacio"
+- nav: navItems con icono, label, badge, secciones
+- .sidebar-bottom: ThemeToggle, status dot "espacio privado"
+```
+
+### 8.2 StarField
+
+Canvas con estrellas: posición aleatoria, tamaño (1-3px), opacidad (0.3-0.9), duplicación (2-7s), delay (-20s a 0). `@keyframes tw` con opacidad variable.
+
+### 8.3 ShootingStars
+
+3 cadenas setTimeout independientes (desincronizadas). Cada ~1.5-5s lanza una estrella:
+- `--len`: 80-220px (largo)
+- `--angle`: -10° a -30°
+- `--dur`: 1.0-1.8s
+- `--y`: 0-100% (toda la pantalla, z-index 1)
+La estrella se elimina del DOM tras 2200ms.
+
+### 8.4 ToastProvider + useToast
+
+Sistema de notificaciones. Provider envuelve app. useToast() retorna showToast(message, type). No hay toasts implementados en los módulos actuales.
+
+### 8.5 ThemeToggle
+
+Cambia clase `.light-mode` en body. Guarda preferencia en localStorage('theme').
+
+### 8.6 EmptyState
+
+Props: icon, title, subtitle. Centrado con icon grande + título serif + subtítulo muted.
+
+---
+
+## 9. SUPABASE
+
+### 9.1 Clientes
+
+- `lib/supabase/client.ts`: `createBrowserClient` de `@supabase/ssr` (browser).
+- `lib/supabase/server.ts`: `createServerClient` con cookies desde `next/headers` (server components + server actions).
+
+### 9.2 Tablas (inferidas del código)
+
+- `photos`: id(uuid), url(text?), title(text), caption(text), date(text), uploaded_by(text), album_id(uuid?), created_at(timestamptz), emoji(text?), bg_gradient(text?)
+- `albums`: id(uuid), title(text), caption(text), created_at(timestamptz)
+- `letters`: id(uuid), from_name(text), to_name(text), subject(text), body(text), unread(bool?), created_at(timestamptz)
+- `capsules`: id(uuid), subject(text), to_name(text), open_date(timestamptz), created_at(timestamptz)
+
+### 9.3 Supabase Storage
+
+Bucket para fotos. Las URLs se almacenan en la columna `url` de la tabla `photos`.
+
+---
+
+## 10. CONSTANTES (lib/constants.ts)
+
+```typescript
+export const COUPLE = {
+  name1: 'Sarai',
+  name2: 'Ricardo',
+  startDate: new Date(Date.UTC(2026, 1, 7, 19, 45, 0)), // 7 feb 2026 16:45 Chile (UTC-3)
+} as const;
+```
+
+- `formatDate(date)` → "7 de febrero de 2026" (es-ES)
+- `getMonthYear(date)` → "febrero de 2026"
+
+---
+
+## 11. COMPRESIÓN DE IMÁGENES (lib/compressImage.ts)
+
+- Canvas API nativa del browser
+- WebP, max 1920px, calidad 0.82 (~200-400KB output)
+- Si original < 200KB, no comprime
+- Si falla, retorna original
+- `compressImages(files, options?)` para batches
+
+---
+
+## 12. HOOKS
+
+### useCounter.ts
+
+```typescript
+function useCounter(): {
+  years: number; months: number; weeks: number; days: number;
+  hours: number; minutes: number; seconds: number;
+}
+```
+
+Calcula tiempo desde COUPLE.startDate hasta ahora. Se actualiza cada 1s con setInterval. Usa fechas calendario para años/meses exactos, luego resto para semanas/días/horas/min/seg.
+
+---
+
+## 13. CONFIGURACIONES
+
+### next.config.ts
+
+```typescript
+allowedDevOrigins: ['192.168.0.12', '*'],
+experimental: { serverActions: { bodySizeLimit: '10mb' } },
+```
+
+### package.json scripts
+
+- `dev` → `next dev`
+- `build` → `next build`
+- `start` → `next start`
+- `lint` → `eslint` (flat config, next/core-web-vitals + TypeScript)
+
+### ESLint
+
+`eslint.config.mjs`: flat config con `eslint-config-next/core-web-vitals` + TypeScript presets.
+
+---
+
+## 14. DISEÑO VISUAL
+
+- **Dark mode**: fondo #0c0b10, texto #f0ece0, tarjetas #1a1924
+- **Acentos**: dorado (#c9a96e), rosado (#b8756a), teal (#5a9ba5)
+- **Tipografía**: serif para títulos y números grandes, body para texto, mono para etiquetas/estadísticas
+- **Efectos**: noise overlay sutíl, estrellas parpadeantes, estrellas fugaces, glow radial en elementos dorados
+- **Animaciones**: page-in (fade+slide), twinkle (estrellas), shoot (estrellas fugaces), botón wish wave
+- **Transiciones**: cubic-bezier(0.25, 0, 0, 1) — rápida (0.15s), media (0.3s), lenta (0.6s)
+
+---
+
+## 15. PATRONES DE CÓDIGO
+
+- **Server Actions**: cada módulo con CRUD (`'use server'`), usa `createClient()` de supabase/server, llama `revalidatePath()`.
+- **Client Components**: `'use client'` para interactividad, hooks, modales.
+- **Estado local**: useState + Server Actions con revalidación; operaciones optimistas con rollback en error.
+- **Modales**: backdrop fijo + box centrado + botón X. Escape cierra, backdrop NO cierra (a menos que se especifique).
+- **Body scroll lock**: cuando un modal está abierto.
+- **Modularización por módulos**: cada feature en `modules/<name>/` con types, actions, components, hooks.
+
+---
+
+## 16. REGLA IMPORTANTE
+
+Cada vez que se haga una modificación visual en la aplicación web, también debe hacerse responsive.
+- Breakpoint: max-width 768px
+- Sidebar → bottom nav
+- Grids → 1 columna
+- Modales → 96vw
+- Ajustar padding, gap, font-sizes
+- Las reglas responsive van en `@media (max-width: 768px)` en `app/globals.css`
+
+---
+
+## 17. GAPS vs ESTRUCTURA IDEAL (estructura.txt)
+
+| Archivo faltante | Ruta |
+|-----------------|------|
+| middleware.ts (protección de rutas) | raíz |
+| lib/supabase/middleware.ts | lib/supabase/ |
+| lib/utils.ts | lib/ |
+| types/database.types.ts | types/ |
+| types/index.ts | types/ |
+| hooks/useTheme.ts | hooks/ |
+| components/ui/Modal.tsx | components/ui/ |
+| modules/*/index.ts | cada módulo |
+| modules/cartas/hooks/useCartas.ts | modules/cartas/ |
+| modules/inicio/hooks/, actions.ts, types.ts | modules/inicio/ |
+| modules/capsula/* | (todo vacío) |
+| modules/juegos/* | (todo vacío) |
+| modules/musica/* | (todo vacío) |
+| styles/animations.css | styles/ |
+| app/auth/login/page.tsx | auth/ |
+| app/auth/callback/route.ts | auth/ |
+
+---
+
+## 18. VARIABLES DE ENTORNO (.env.local)
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://xcrzztzqbatblxwxsqpn.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_ZoYoW25-SlWYTYoso6F8SQ_t3D3l58G
+```
+
+---
+
+## 19. GRAFO DEL PROYECTO (graphify)
+
+El proyecto fue analizado con graphify. El grafo completo tiene 178 nodos, 259 aristas, 22 comunidades.
+Comunidades principales:
+- Gallery Data Operations (19 nodos)
+- Project Dependencies (23 nodos)
+- Gallery Components (16 nodos)
+- Home Dashboard
+- Counter & Layout
+- App Layout & Shared UI
+- App Pages (Cápsula, Cartas, etc.)
+- Root Layout & Metadata
+
+Exportado a `graphify-out/graph.html` (visualización interactiva) y `graphify-out/GRAPH_REPORT.md` (reporte completo).
+
+---
+
+*Documento generado el 29 de mayo de 2026 para permitir a cualquier IA entender el proyecto sin acceso directo a los archivos.*

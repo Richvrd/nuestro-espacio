@@ -8,9 +8,8 @@ import { ThemeToggle } from './ThemeToggle';
 const navItems = [
   { href: '/inicio', label: 'Inicio', icon: '✦', section: 'principal' },
   { href: '/galeria', label: 'Galería', icon: '📸', section: 'nuestro espacio' },
-  { href: '/musica', label: 'Música', icon: '🎵', section: 'nuestro espacio' },
   { href: '/cartas', label: 'Cartas', icon: '💌', section: 'nuestro espacio', badge: '0' },
-  { href: '/juegos', label: 'Juegos', icon: '🎮', section: 'extras' },
+  { href: '/linea-de-tiempo', label: 'Línea de Tiempo', icon: '🪐', section: 'nuestro espacio' },
   { href: '/capsula', label: 'Cápsula', icon: '⏳', section: 'extras' },
 ];
 
