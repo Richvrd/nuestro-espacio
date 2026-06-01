@@ -1,0 +1,234 @@
+=========================================================================
+  INICIO — página de inicio de Nuestro Espacio
+  Ruta: /inicio
+  Archivo principal: app/(app)/inicio/page.tsx
+=========================================================================
+
+La página de inicio es la primera vista al entrar a la aplicación
+(después del login). Muestra un hero de bienvenida a pantalla completa
+con una animación orbital y un contador del tiempo juntos, seguido de
+secciones de contenido que revelan suavemente al hacer scroll por
+primera vez.
+
+Estructura de arriba a abajo:
+
+  1. HERO (existente, sin cambios)
+  2. SECCIONES REVEAL (nuevo, reemplaza el antiguo home-body/dashboard)
+
+=========================================================================
+  PARTE 1 — HERO (existente)
+=========================================================================
+
+Cubre el 100vh inicial. No requiere scroll para verse.
+
+Componentes:
+  ┌─ OrbitCanvas ................... modules/inicio/components/OrbitCanvas.tsx
+  │   Lienzo <canvas> con animación de dos estrellas (rosa y dorada)
+  │   orbitando en elipses concéntricas alrededor de un punto central.
+  │   Usa requestAnimationFrame para el loop de dibujo.
+  │   Se redimensiona automáticamente al tamaño del contenedor.
+  │
+  ├─ Título ....................... "Ricardo & Sarai" (desde COUPLE.name1/2)
+  │   Fuente serif (Playfair Display), con "&" en dorado.
+  │
+  ├─ Tagline ...................... "nuestro espacio · siempre"
+  │   Fuente mono (IBM Plex Mono), espaciado, en muted.
+  │
+  └─ HeroCounter .................. modules/inicio/components/HeroCounter.tsx
+      Muestra años:meses:días (grande) y horas:min:seg (chico).
+      Hook: hooks/useCounter.ts — calcula diferencia desde la fecha
+      definida en COUPLE.startDate (en lib/constants.ts).
+      Se actualiza cada segundo vía setInterval.
+
+CSS asociado (app/globals.css):
+  .home-hero, #orbit-canvas, .home-hero-content,
+  .home-title, .home-tagline, .hero-counter, .hero-counter-units,
+  .hcu, .hcu-val, .hcu-val--sm, .hcu-label, .hcu-sep, .hcu-sep--sm,
+  .hero-counter-sub, .hero-counter-since
+  → Todo esto es existente y no fue modificado.
+
+=========================================================================
+  PARTE 2 — SECCIONES REVEAL (nuevo)
+=========================================================================
+
+Reemplaza el antiguo home-body/home-dashboard (que fue un dashboard
+con grid asimétrico de stats, cartas, foto y cápsulas).
+
+Archivos nuevos:
+  ├─ app/(app)/inicio/InicioSections.tsx
+  ├─ hooks/useScrollReveal.ts
+  └─ CSS nuevo en app/globals.css (bajo "INICIO SECTIONS (reveal)")
+
+2.1. MECÁNICA DE REVELADO (useScrollReveal)
+────────────────────────────────────────────
+  Archivo: hooks/useScrollReveal.ts
+
+  - Escucha el evento 'scroll' en el elemento #main (el contenedor
+    scrollable del layout).
+  - Calcula un progreso de 0 a 1: scrollTop / (scrollHeight - clientHeight - 80).
+  - Usa requestAnimationFrame para throttling.
+  - Cada sección tiene un offset escalonado (idx * 0.14), de modo que
+    aparecen una tras otra en lugar de todas a la vez.
+  - Aplica opacity y translateY con easing cúbico (1 - (1-t)^3).
+  - Cuando el progreso llega a 1, se marca "done = true" y se elimina
+    el event listener. A partir de ahí el scroll es normal y todas las
+    secciones quedan completamente visibles.
+  - En cada refresco de página (navegación a /inicio), el efecto
+    se reinicia porque el hook se monta de nuevo.
+
+  Retorna: { progress, done, styleFor }
+    styleFor(idx) → React.CSSProperties con opacity y transform.
+
+2.2. COMPONENTE InicioSections
+───────────────────────────────
+  Archivo: app/(app)/inicio/InicioSections.tsx
+
+  Render Prop: recibe un array de secciones { ornament, message, content }.
+  Itera con .map() aplicando styleFor(i) a cada <section>.
+  Cada sección tiene dos columnas (grid 1fr 2fr):
+    .is-message → ornamental + frase poética (serif, itálica, muted)
+    .is-content → el contenido dinámico de cada sección
+
+2.3. LAS 5 SECCIONES
+──────────────────────
+  Definidas como un array en page.tsx (dentro del server component).
+
+  Sección 1  —  "Nuestra historia"
+    Ornamento: ✦
+    Mensaje:   "Cada momento contigo es un latido que el universo guarda."
+    Contenido: .is-moment-card con emoji + título + fecha del último
+               momento registrado (desde tabla 'moments' SQL).
+               Si no hay momentos: texto "Aún no hay momentos registrados".
+
+  Sección 2  —  "Lo que hemos visto"
+    Ornamento: 📸
+    Mensaje:   "Nuestros ojos guardan instantes que el tiempo no borra."
+    Contenido:
+      - .is-featured-photo: la foto más reciente (imagen o placeholder
+        con gradient + emoji). Si tiene caption, se muestra como
+        superposición inferior con gradiente.
+      - .is-photo-stats: contador de fotos totales + momentos especiales
+        + link "ver galería →"
+      - .is-thumbnails: hasta 6 miniaturas (60×60px) de las fotos
+        siguientes a la destacada.
+
+  Sección 3  —  "Palabras que quedan"
+    Ornamento: 💌
+    Mensaje:   "Algunas cosas solo se dicen con el corazón."
+    Contenido:
+      - Tarjetas .is-letter-item con: para quién, asunto, fecha.
+      - Las 3 cartas más recientes de la tabla 'letters'.
+      - Link "leer todas →" a /cartas.
+      - Si no hay cartas: "Aún no hay cartas".
+
+  Sección 4  —  "El tiempo guarda"
+    Ornamento: ⏳
+    Mensaje:   "El futuro nos espera, y lo guardamos aquí."
+    Contenido:
+      - Tarjetas .is-capsule-item con: asunto + destinatario.
+      - Las 2 cápsulas más recientes de la tabla 'capsules'.
+      - Link "ver todas →" a /capsula.
+      - Si no hay cápsulas: "Aún no hay cápsulas".
+
+  Sección 5  —  "Cierre"
+    Ornamento: 💗
+    Mensaje:   "Siempre hay un espacio para ti aquí."
+    Contenido: WishButton (existente, sin modificaciones).
+
+2.4. WISHBUTTON (existente, reutilizado)
+─────────────────────────────────────────
+  Archivo: modules/inicio/components/WishButton.tsx
+  Botón con forma de corazón (SVG) que al hacer clic:
+    - Incrementa un contador local de "pensamientos enviados"
+    - Muestra una onda expansiva (onda CSS con clase .wave.active)
+    - Muestra feedback "💗 yo también..." por 2 segundos
+  No persiste en DB, es solo visual.
+
+=========================================================================
+  CSS — nuevos estilos agregados (app/globals.css)
+=========================================================================
+
+  Sección "INICIO SECTIONS (reveal)" — líneas ~690 en adelante:
+
+  .inicio-sections
+    → contenedor flex column, max-width 960px centrado, gap 5rem
+
+  .is-section
+    → grid 1fr 2fr, gap 3rem, align-items center, will-change
+
+  .is-message / .is-ornament / .is-text
+    → columna izquierda: ornamental + frase serif itálica muted
+
+  .is-content
+    → columna derecha: contenido dinámico flex column
+
+  .is-moment-card / .is-moment-emoji / .is-moment-info / ...
+    → tarjeta del último momento
+
+  .is-photos-section / .is-featured-photo / .is-photo-caption
+    → foto destacada con aspect-ratio 16/9 y caption overlay
+
+  .is-photo-stats / .is-stat-num / .is-stat-label / .is-stat-sep
+    → stats de galería
+
+  .is-thumbnails / .is-thumb / .is-thumb-placeholder
+    → miniaturas 60×60px
+
+  .is-letters-section / .is-letter-item / .is-letter-from / ...
+    → cartas recientes apiladas
+
+  .is-capsules-section / .is-capsule-item / .is-capsule-subject / ...
+    → cápsulas recientes apiladas
+
+  .is-wish-section → wrapping del WishButton
+
+  .is-link → links dorados a galería/cartas/cápsula
+
+  .is-empty → estado vacío
+
+=========================================================================
+  CAMBIOS REALIZADOS — Resumen
+=========================================================================
+
+  ✓ hooks/useScrollReveal.ts  — NUEVO
+  ✓ app/(app)/inicio/InicioSections.tsx — NUEVO
+  ✓ app/(app)/inicio/page.tsx — REESCRITO (hero se mantiene, secciones
+    nuevas reemplazan el dashboard anterior)
+  ✓ app/globals.css — AGREGADOS ~160 líneas de .is-* styles
+  ✓ app/globals.css — ELIMINADO bloque "HOME DASHBOARD" (.home-body,
+    .home-dashboard, .hd-stats, .hd-moment-badge, .hd-letters-card,
+    .hd-photo-card, .hd-capsules-card, .letter-preview-item)
+  ✓ app/globals.css — ELIMINADOS estilos responsive del dashboard
+
+=========================================================================
+  COMPONENTES DE modules/inicio/ (todos existentes, sin cambios)
+=========================================================================
+
+  modules/inicio/components/
+  ├── OrbitCanvas.tsx — canvas animado con órbitas y estrellas
+  ├── HeroCounter.tsx — contador en vivo años:meses:días horas:min:seg
+  ├── CounterDisplay.tsx — variante del contador para usar en cards
+  ├── StatCard.tsx — tarjeta simple de estadística (icono + número + label)
+  └── WishButton.tsx — botón corazón con ondas y feedback
+
+=========================================================================
+  FLUJO DE DATOS
+=========================================================================
+
+  page.tsx (server component)
+    │
+    ├─ createClient() → Supabase
+    │   ├─ getStats()       → counts de photos, letters, capsules, moments
+    │   ├─ getLatestMoment()→ 1 momento más reciente
+    │   ├─ getPhotos()      → 7 fotos más recientes
+    │   ├─ getRecentLetters()→ 3 cartas más recientes
+    │   └─ getRecentCapsules()→ 2 cápsulas más recientes
+    │
+    ├─ Render: <OrbitCanvas /> (cliente)
+    ├─ Render: <HeroCounter /> (cliente, usa useCounter)
+    └─ Render: <InicioSections sections={...} /> (cliente)
+                └─ usa useScrollReveal() para animar entrada
+                └─ cada sección renderiza su content (JSX con datos)
+                └─ última sección contiene <WishButton /> (cliente)
+
+=========================================================================
