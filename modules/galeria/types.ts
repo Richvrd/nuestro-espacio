@@ -9,6 +9,7 @@ export interface Photo {
   created_at: string;
   emoji?: string;
   bg_gradient?: string;
+  is_special: boolean;
 }
 
 export interface Album {
