@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useToast } from '@/components/ui/Toast';
 import { EmptyState } from '@/components/ui/EmptyState';
 import type { Moment } from '../types';
@@ -26,6 +26,8 @@ export function TimelineApp({ initialMoments }: TimelineAppProps) {
   const { showToast } = useToast();
 
   const [selectedYear, setSelectedYear] = useState<number | 'all'>('all');
+  const [slideDir, setSlideDir] = useState<'next' | 'prev' | null>(null);
+  const prevYearRef = useRef(selectedYear);
   const [modalState, setModalState] = useState<ModalState>(null);
   const [viewMode, setViewMode] = useState<'compact' | 'expanded'>('compact');
 
@@ -76,6 +78,20 @@ export function TimelineApp({ initialMoments }: TimelineAppProps) {
     setModalState(null);
     showToast('🗑 momento eliminado');
   };
+
+  const handleYearChange = useCallback((year: number | 'all') => {
+    const prev = prevYearRef.current;
+    if (prev !== 'all' && year !== 'all') {
+      if (year > prev) setSlideDir('next');
+      else if (year < prev) setSlideDir('prev');
+    }
+    setSelectedYear(year);
+    setTimeout(() => setSlideDir(null), 400);
+  }, []);
+
+  useEffect(() => {
+    prevYearRef.current = selectedYear;
+  }, [selectedYear]);
 
   return (
     <>
@@ -140,14 +156,14 @@ export function TimelineApp({ initialMoments }: TimelineAppProps) {
           years={availableYears}
           momentCountByYear={momentCountByYear}
           selectedYear={selectedYear}
-          onSelect={setSelectedYear}
+          onSelect={handleYearChange}
         />
       )}
 
       {moments.length === 0 ? (
         <EmptyState icon="⏳" title="Todavía no hay momentos" subtitle="agrega el primer momento de su historia" />
       ) : (
-        <div className={`tl-view-wrapper ${viewMode}`}>
+        <div className={`tl-view-wrapper ${viewMode}${slideDir ? ` slide-${slideDir}` : ''}`}>
           <TimelineView
             moments={visibleMoments}
             viewMode={viewMode}

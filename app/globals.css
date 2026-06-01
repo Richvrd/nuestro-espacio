@@ -2498,6 +2498,20 @@ nav {
   margin-top: 0.8rem;
 }
 
+/* Year transition slide */
+.tl-view-wrapper.slide-next { animation: slideFromRight 0.5s ease; }
+.tl-view-wrapper.slide-prev  { animation: slideFromLeft  0.5s ease; }
+
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(60px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-60px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 /* End of line */
 .tl-end {
   display: flex;
