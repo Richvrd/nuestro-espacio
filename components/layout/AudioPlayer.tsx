@@ -33,6 +33,7 @@ function parseTrack(name: string): { title: string; artist: string } {
 
 export function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.4);
   const [started, setStarted] = useState(false);
@@ -42,6 +43,7 @@ export function AudioPlayer() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [scrollDist, setScrollDist] = useState(0);
 
   const currentSrc = playlist.length > 0 ? `/audio/${playlist[currentIdx]}` : null;
 
@@ -95,6 +97,56 @@ export function AudioPlayer() {
     }
   }, [currentIdx]);
 
+  useEffect(() => {
+    const el = labelRef.current;
+    if (!el) return;
+    const timer = requestAnimationFrame(() => {
+      if (el.scrollWidth > el.clientWidth) {
+        setScrollDist(el.scrollWidth - el.clientWidth);
+      } else {
+        setScrollDist(0);
+      }
+    });
+    return () => cancelAnimationFrame(timer);
+  }, [currentIdx, currentSrc]);
+
+  useEffect(() => {
+    const el = labelRef.current;
+    if (!el || scrollDist <= 0) return;
+
+    const CYCLE = 12000;
+    const PAUSE_S = 2000;
+    const SCROLL_F = 3000;
+    const PAUSE_E = 3000;
+    const SCROLL_B = 3000;
+
+    let start = performance.now();
+    let id: number;
+
+    function ease(t: number): number {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function tick(now: number) {
+      const e = (now - start) % CYCLE;
+      let p: number;
+      if (e < PAUSE_S) {
+        p = 0;
+      } else if (e < PAUSE_S + SCROLL_F) {
+        p = ease((e - PAUSE_S) / SCROLL_F);
+      } else if (e < PAUSE_S + SCROLL_F + PAUSE_E) {
+        p = 1;
+      } else {
+        p = 1 - ease(Math.min((e - PAUSE_S - SCROLL_F - PAUSE_E) / SCROLL_B, 1));
+      }
+      el!.style.transform = `translateX(${-p * scrollDist}px)`;
+      id = requestAnimationFrame(tick);
+    }
+
+    id = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(id); if (el) el.style.transform = ''; };
+  }, [scrollDist]);
+
   const play = useCallback(() => {
     audioRef.current?.play().catch(() => {});
     setPlaying(true);
@@ -144,7 +196,8 @@ export function AudioPlayer() {
         {(() => {
           const { title, artist } = currentSrc ? parseTrack(playlist[currentIdx]) : { title: '—', artist: '' };
           return (
-            <span className="ap-track-label" title={currentSrc || ''}>
+            <span className="ap-track-label" ref={labelRef}
+              title={currentSrc || ''}>
               <span className="ap-track-title">{title}</span>
               {artist && <span className="ap-track-artist"> — {artist}</span>}
             </span>

@@ -58,17 +58,6 @@ body::before {
   opacity: 0.6;
 }
 
-body.light-mode {
-  --surface:   #f5f4f0;
-  --card:      #ffffff;
-  --card-high: #faf9f6;
-  --border:    rgba(0,0,0,0.07);
-  --border-hi: rgba(201,169,110,0.4);
-  --text:      #1a1924;
-  --muted:     #7a7570;
-  --dimmed:    #d0cec8;
-}
-
 #starfield {
   position: fixed; inset: 0;
   pointer-events: none;

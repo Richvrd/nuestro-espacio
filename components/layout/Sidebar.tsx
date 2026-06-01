@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { COUPLE, formatDate } from '@/lib/constants';
-import { ThemeToggle } from './ThemeToggle';
 import { AudioPlayer } from './AudioPlayer';
 
 const navItems = [
@@ -56,7 +55,6 @@ export function Sidebar() {
       <AudioPlayer />
 
       <div className="sidebar-bottom">
-        <ThemeToggle />
         <div className="sidebar-status">
           <div className="status-dot"></div>
           <span>espacio privado</span>
