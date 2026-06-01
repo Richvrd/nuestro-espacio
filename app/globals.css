@@ -2782,18 +2782,85 @@ nav {
   gap: 0.4rem;
 }
 
-.ap-row-top {
+.ap-track-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.3rem;
 }
 
 .ap-track-label {
-  font-family: var(--mono);
-  font-size: 0.48rem;
-  letter-spacing: 0.15em;
+  font-family: var(--serif);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
   color: var(--dimmed);
-  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ap-track-title {
+  color: var(--text);
+}
+
+.ap-track-artist {
+  color: var(--gold);
+}
+
+.ap-track-count {
+  font-family: var(--mono);
+  font-size: 0.42rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.ap-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ap-time {
+  font-family: var(--mono);
+  font-size: 0.42rem;
+  color: var(--muted);
+  min-width: 2.6em;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ap-seek {
+  flex: 1;
+  height: 3px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.ap-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+}
+.ap-seek::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+  border: none;
+}
+
+.ap-loading {
+  font-family: var(--mono);
+  font-size: 0.45rem;
+  color: var(--muted);
+  text-align: center;
 }
 
 .ap-controls {
@@ -2951,12 +3018,15 @@ nav {
 
   .ap-mobile-panel .ap-inner {
     align-items: center;
+    width: 100%;
   }
+  .ap-mobile-panel .ap-track-info { width: 100%; }
+  .ap-mobile-panel .ap-progress-row { width: 100%; }
   .ap-mobile-panel .ap-controls { gap: 1rem; }
   .ap-mobile-panel .ap-btn { width: 36px; height: 36px; font-size: 0.8rem; }
   .ap-mobile-panel .ap-play { width: 44px; height: 44px; font-size: 0.9rem; }
   .ap-mobile-panel .ap-volume-row { width: 100%; max-width: 200px; }
-  .ap-mobile-panel .ap-track-label { font-size: 0.55rem; }
+  .ap-mobile-panel .ap-track-label { font-size: 1rem; margin-bottom: 0.6rem; }
 }
 
 /* ── Responsive 768px ── */
