@@ -5,6 +5,7 @@ import { Capsule, getCapsuleStatus } from '../types';
 
 interface CapsulaCardProps {
   capsule: Capsule;
+  index: number;
   onClick: () => void;
   justOpened: boolean;
 }
@@ -23,7 +24,7 @@ function calcDiff(target: Date) {
 
 function pad(n: number) { return String(n).padStart(2, '0'); }
 
-export function CapsulaCard({ capsule, onClick, justOpened }: CapsulaCardProps) {
+export function CapsulaCard({ capsule, index, onClick, justOpened }: CapsulaCardProps) {
   const status = getCapsuleStatus(capsule);
   const target = new Date(capsule.open_date);
   const [diff, setDiff] = useState(() => calcDiff(target));
@@ -46,7 +47,7 @@ export function CapsulaCard({ capsule, onClick, justOpened }: CapsulaCardProps) 
   const statusClass = status === 'open' ? 'abierta' : 'sellada';
 
   return (
-    <div className={`capsula-card ${statusClass}${justOpened ? ' just-opened' : ''}`} onClick={onClick}>
+    <div className={`capsula-card ${statusClass}${justOpened ? ' just-opened' : ''}`} style={{ '--stagger-i': index } as React.CSSProperties} onClick={onClick}>
       <div className="card-state">
         {status === 'open' ? '💌 abierta' : '🔒 sellada'}
       </div>

@@ -99,8 +99,8 @@ export function CapsulasApp({ initialCapsulas }: CapsulasAppProps) {
             <section>
               <div className="capsula-section-label">selladas · esperando su momento</div>
               <div className="capsulas-grid">
-                {sealedCapsules.map(cap => (
-                  <CapsulaCard key={cap.id} capsule={cap}
+                {sealedCapsules.map((cap, i) => (
+                  <CapsulaCard key={cap.id} capsule={cap} index={i}
                     onClick={() => setSelectedCapsule(cap)}
                     justOpened={justOpenedIds.has(cap.id)} />
                 ))}
@@ -112,8 +112,8 @@ export function CapsulasApp({ initialCapsulas }: CapsulasAppProps) {
             <section>
               <div className="capsula-section-label">abiertas · listas para leer</div>
               <div className="capsulas-grid">
-                {openCapsules.map(cap => (
-                  <CapsulaCard key={cap.id} capsule={cap}
+                {openCapsules.map((cap, i) => (
+                  <CapsulaCard key={cap.id} capsule={cap} index={i}
                     onClick={() => setSelectedCapsule(cap)}
                     justOpened={false} />
                 ))}

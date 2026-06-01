@@ -27,7 +27,7 @@ async function getRecentLetters() {
   const supabase = await createClient();
   const { data } = await supabase
     .from('letters')
-    .select('id, subject, from_name, created_at')
+    .select('id, subject, from_name, created_at, body')
     .order('created_at', { ascending: false })
     .limit(3);
   
@@ -45,6 +45,30 @@ async function getRecentCapsules() {
   return data || [];
 }
 
+async function getLatestPhoto() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('photos')
+    .select('id, url, caption, title')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  
+  return data;
+}
+
+async function getLatestMoment() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('moments')
+    .select('id, title, emoji, date')
+    .order('date', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  
+  return data;
+}
+
 function formatLetterDate(dateStr: string) {
   const date = new Date(dateStr);
   return date.toLocaleDateString('es-ES', { 
@@ -54,10 +78,12 @@ function formatLetterDate(dateStr: string) {
 }
 
 export default async function InicioPage() {
-  const [stats, letters, capsules] = await Promise.all([
+  const [stats, letters, capsules, latestPhoto, latestMoment] = await Promise.all([
     getStats(),
     getRecentLetters(),
     getRecentCapsules(),
+    getLatestPhoto(),
+    getLatestMoment(),
   ]);
 
   return (
@@ -73,88 +99,76 @@ export default async function InicioPage() {
         </div>
       </div>
 
-      {/*
       <div className="home-body">
-        <div className="home-grid">
-          
-          <StatCard icon="📸" value={stats.photos} label="fotos" />
-          <StatCard icon="💌" value={stats.letters} label="cartas" />
-          <StatCard icon="⏳" value={stats.capsules} label="cápsulas" />
+        <div className="home-dashboard">
 
-          {stats.photos === 0 ? (
-            <div className="card" style={{ gridColumn: '1 / -1', padding: '2rem' }}>
-              <EmptyState 
-                icon="📸" 
-                title="Aún no hay fotos" 
-                subtitle="sean los primeros en subir un recuerdo" 
-              />
-              <Link href="/galeria" className="link-arrow" style={{ display: 'block', textAlign: 'center', marginTop: '1rem' }}>
-                ver galería →
-              </Link>
-            </div>
-          ) : (
-            <div className="card" style={{ gridColumn: '1 / -1', padding: '2rem' }}>
-              <div style={{ marginBottom: '1rem', fontFamily: 'var(--mono)', fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--muted)', textTransform: 'uppercase' }}>
-                recientes
-              </div>
-              <Link href="/galeria" className="link-arrow" style={{ display: 'block', textAlign: 'right', marginTop: '1rem' }}>
-                ver galería →
-              </Link>
-            </div>
-          )}
-
-          {letters.length === 0 ? (
-            <div className="card" style={{ gridColumn: '1 / -1', padding: '2rem' }}>
-              <EmptyState 
-                icon="💌" 
-                title="Aún no hay cartas" 
-                subtitle="escribe la primera carta" 
-              />
-              <Link href="/cartas" className="link-arrow" style={{ display: 'block', textAlign: 'center', marginTop: '1rem' }}>
-                leer todas →
-              </Link>
-            </div>
-          ) : (
-            <div className="card" style={{ gridColumn: '1 / -1', padding: '1rem' }}>
-              <div style={{ padding: '0.5rem 1rem', fontFamily: 'var(--mono)', fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--muted)', textTransform: 'uppercase', borderBottom: '1px solid var(--border)' }}>
-                últimas cartas
-              </div>
-              {letters.map(letter => (
-                <div key={letter.id} className="letter-preview-item">
-                  <div className="li-from">de {letter.from_name}</div>
-                  <div className="li-subject">{letter.subject}</div>
-                  <div className="li-date">{formatLetterDate(letter.created_at)}</div>
+          <div className="hd-stats">
+            <StatCard icon="📸" value={stats.photos} label="fotos" />
+            <StatCard icon="💌" value={stats.letters} label="cartas" />
+            <StatCard icon="⏳" value={stats.capsules} label="cápsulas" />
+            {latestMoment && (
+              <div className="hd-moment-badge">
+                <span className="hd-moment-emoji">{latestMoment.emoji}</span>
+                <div className="hd-moment-info">
+                  <span className="hd-moment-label">último momento</span>
+                  <span className="hd-moment-title">{latestMoment.title}</span>
                 </div>
-              ))}
-              <Link href="/cartas" className="link-arrow" style={{ display: 'block', textAlign: 'right', padding: '1rem', paddingTop: '0' }}>
-                leer todas →
-              </Link>
-            </div>
-          )}
-
-          {capsules.length === 0 ? (
-            <div className="card" style={{ gridColumn: '1 / -1', padding: '2rem' }}>
-              <EmptyState 
-                icon="⏳" 
-                title="Aún no hay cápsulas" 
-                subtitle="crea la primera cápsula del tiempo" 
-              />
-              <Link href="/capsula" className="link-arrow" style={{ display: 'block', textAlign: 'center', marginTop: '1rem' }}>
-                ver todas →
-              </Link>
-            </div>
-          ) : (
-            <div className="card" style={{ gridColumn: '1 / -1', padding: '2rem' }}>
-              <Link href="/capsula" className="link-arrow" style={{ display: 'block', textAlign: 'center' }}>
-                ver todas →
-              </Link>
-            </div>
-          )}
+              </div>
+            )}
+          </div>
 
           <WishButton />
+
+          <div className="hd-letters-card card">
+            <div className="hd-section-header">
+              <span className="hd-section-label">últimas cartas</span>
+              <Link href="/cartas" className="link-arrow">ver todas →</Link>
+            </div>
+            {letters.length === 0 ? (
+              <EmptyState icon="💌" title="Aún no hay cartas" subtitle="escribe la primera carta" />
+            ) : (
+              <>
+                {letters.map(letter => (
+                  <div key={letter.id} className="letter-preview-item">
+                    <div className="li-from">de {letter.from_name}</div>
+                    <div className="li-subject">{letter.subject}</div>
+                    <div className="li-date">{formatLetterDate(letter.created_at)}</div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+
+          {latestPhoto && (
+            <div className="hd-photo-card">
+              <div className="hd-photo-frame">
+                <img src={latestPhoto.url} alt={latestPhoto.caption || ''} />
+              </div>
+              {latestPhoto.caption && (
+                <div className="hd-photo-caption">{latestPhoto.caption}</div>
+              )}
+            </div>
+          )}
+
+          <div className="hd-capsules-card card">
+            <div className="hd-section-header">
+              <span className="hd-section-label">cápsulas</span>
+              <Link href="/capsula" className="link-arrow">ver todas →</Link>
+            </div>
+            {capsules.length === 0 ? (
+              <EmptyState icon="⏳" title="Aún no hay cápsulas" subtitle="crea la primera cápsula del tiempo" />
+            ) : (
+              capsules.map(cap => (
+                <div key={cap.id} className="hd-capsule-item">
+                  <span className="hd-capsule-subject">{cap.subject}</span>
+                  <span className="hd-capsule-meta">para {cap.to_name}</span>
+                </div>
+              ))
+            )}
+          </div>
+
         </div>
       </div>
-      */}
     </div>
   );
 }

@@ -9,6 +9,7 @@ interface MomentCardProps {
   moment: Moment;
   side: 'left' | 'right';
   viewMode: 'compact' | 'expanded';
+  cardIndex: number;
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -18,7 +19,7 @@ function formatDate(dateStr: string): string {
   return d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export function MomentCard({ moment, side, viewMode, onEdit, onDelete }: MomentCardProps) {
+export function MomentCard({ moment, side, viewMode, cardIndex, onEdit, onDelete }: MomentCardProps) {
   const catMeta = CATEGORY_META[moment.category];
   const intMeta = INTENSITY_META[moment.intensity];
   const [expanded, setExpanded] = useState(false);
@@ -32,7 +33,7 @@ export function MomentCard({ moment, side, viewMode, onEdit, onDelete }: MomentC
   };
 
   return (
-    <div className={`tl-item ${side}`}>
+    <div className={`tl-item ${side}`} style={{ '--stagger-i': cardIndex } as React.CSSProperties}>
       <div className="tl-card-wrap">
         <div
           className={`tl-card intensity-${moment.intensity}${isExpanded ? ' card-expanded' : ''}`}

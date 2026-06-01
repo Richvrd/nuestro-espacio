@@ -12,7 +12,7 @@ export function AlbumCard({ album, index, onOpen }: AlbumCardProps) {
   const cover = album.photos.slice(0, 2);
 
   return (
-    <div className={`photo-card album-card ${index % 2 === 0 ? '' : 'odd'}`} onClick={onOpen}>
+    <div className={`photo-card album-card ${index % 2 === 0 ? '' : 'odd'}`} style={{ '--stagger-i': index } as React.CSSProperties} onClick={onOpen}>
       {/* Naipes apilados */}
       <div className="album-stack">
         {cover[1] && (

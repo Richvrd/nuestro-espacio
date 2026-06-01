@@ -70,6 +70,17 @@ export function GaleriaGrid({ initialPhotos, initialAlbums }: GaleriaGridProps) 
     }
   }, [items, filter]);
 
+  const filteredPhotos = useMemo(() => {
+    if (filter === 'albums') return [];
+    if (filter === 'special') return photos.filter(p => p.is_special);
+    return photos;
+  }, [photos, filter]);
+
+  const filteredAlbums = useMemo(() => {
+    if (filter === 'photos' || filter === 'special') return [];
+    return albums;
+  }, [albums, filter]);
+
   const stats = useMemo(() => ({
     photos: photos.length,
     albums: albums.length,
@@ -146,19 +157,19 @@ export function GaleriaGrid({ initialPhotos, initialAlbums }: GaleriaGridProps) 
       {viewMode === 'grid' ? (
         <>
           <div className="gallery-grid">
-            {total === 0 && (
+            {filteredPhotos.length === 0 && filteredAlbums.length === 0 && (
               <EmptyState
                 icon="📸"
-                title="Aún no hay fotos"
-                subtitle="sean los primeros en subir un recuerdo"
+                title={filter === 'special' ? 'Sin momentos especiales' : 'Aún no hay fotos'}
+                subtitle={filter === 'special' ? 'marca fotos como especiales para verlas aquí' : 'sean los primeros en subir un recuerdo'}
               />
             )}
 
-            {photos.map((photo, i) => (
+            {filteredPhotos.map((photo, i) => (
               <FotoCard key={photo.id} photo={photo} index={i} onOpen={() => setOpenPhotoId(photo.id)} />
             ))}
 
-            {albums.map((album, i) => (
+            {filteredAlbums.map((album, i) => (
               <AlbumCard key={album.id} album={album} index={i} onOpen={() => setOpenAlbumId(album.id)} />
             ))}
 

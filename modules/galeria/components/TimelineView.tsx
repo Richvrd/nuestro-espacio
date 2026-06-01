@@ -106,7 +106,7 @@ export function TimelineView({ items, onPhotoClick, onAlbumClick, onToggleSpecia
 
   return (
     <div className="timeline">
-      {monthGroups.map((group) => {
+      {monthGroups.map((group, idx) => {
         const isExpanded = expandedMonths.has(group.key);
         const featured = group.featuredPhoto;
         const hasFeatured = featured !== null;
@@ -129,7 +129,7 @@ export function TimelineView({ items, onPhotoClick, onAlbumClick, onToggleSpecia
             : `${albumCount} álbum${albumCount !== 1 ? 'es' : ''}`;
 
         return (
-          <div className="month-section" key={group.key}>
+          <div className="month-section" key={group.key} style={{ '--stagger-i': idx } as React.CSSProperties}>
             <div className="month-header">
               <div className="month-label">
                 <span className="month-name">{group.label.split(' de ')[0]}</span>
@@ -192,11 +192,23 @@ export function TimelineView({ items, onPhotoClick, onAlbumClick, onToggleSpecia
                     }
 
                     const a = item.data as Album;
+                    const cover = a.photos.slice(0, 2);
                     return (
-                      <div className="album-rail-card" key={a.id} onClick={() => onAlbumClick(a)}>
-                        <div className="album-rail-icon">🗂</div>
-                        <div className="album-rail-title">{a.title}</div>
-                        <div className="album-rail-count">{a.photos.length} foto{a.photos.length !== 1 ? 's' : ''}</div>
+                      <div className="photo-card album-card" key={a.id} onClick={() => onAlbumClick(a)}>
+                        <div className="album-stack">
+                          {cover[1] && (
+                            <div className="album-stack-back">
+                              <img src={cover[1].url || ''} alt="" />
+                            </div>
+                          )}
+                          <div className="album-stack-front">
+                            <img src={cover[0].url || ''} alt={a.title} />
+                          </div>
+                        </div>
+                        <div className="photo-overlay">
+                          <div className="photo-caption">{a.title}</div>
+                          <div className="photo-date">{a.photos.length} foto{a.photos.length !== 1 ? 's' : ''}</div>
+                        </div>
                       </div>
                     );
                   })}

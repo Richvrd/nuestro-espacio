@@ -50,6 +50,7 @@ export function TimelineView({ moments, viewMode, onAddBetween, onEdit, onDelete
   );
 
   let prevYear: number | null = null;
+  let cardIndex = 0;
 
   moments.forEach((m, i) => {
     const year = getMomentYear(m);
@@ -69,10 +70,12 @@ export function TimelineView({ moments, viewMode, onAddBetween, onEdit, onDelete
         moment={m}
         side={side}
         viewMode={viewMode}
+        cardIndex={cardIndex}
         onEdit={() => onEdit(m)}
         onDelete={() => onDelete(m.id)}
       />
     );
+    cardIndex++;
 
     const nextDate = i < moments.length - 1 ? moments[i + 1].date : null;
     items.push(
