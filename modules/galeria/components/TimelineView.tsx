@@ -105,7 +105,7 @@ export function TimelineView({ items, onPhotoClick, onAlbumClick, onToggleSpecia
   if (monthGroups.length === 0) return null;
 
   return (
-    <div className="timeline">
+    <div className="timeline gallery-timeline">
       {monthGroups.map((group, idx) => {
         const isExpanded = expandedMonths.has(group.key);
         const featured = group.featuredPhoto;

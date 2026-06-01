@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { COUPLE, formatDate } from '@/lib/constants';
 import { ThemeToggle } from './ThemeToggle';
+import { AudioPlayer } from './AudioPlayer';
 
 const navItems = [
   { href: '/inicio', label: 'Inicio', icon: '✦', section: 'principal' },
@@ -51,6 +52,8 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      <AudioPlayer />
 
       <div className="sidebar-bottom">
         <ThemeToggle />

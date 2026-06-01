@@ -2293,6 +2293,10 @@ nav {
   z-index: 0;
 }
 
+.gallery-timeline::before {
+  content: none;
+}
+
 /* Floating particles on the axis */
 .timeline-particles {
   position: absolute;
@@ -2765,6 +2769,195 @@ nav {
 }
 .emoji-opt:hover  { border-color: var(--border-hi); background: rgba(201,169,110,0.06); }
 .emoji-opt.active { border-color: var(--gold); background: rgba(201,169,110,0.1); }
+
+/* ── AUDIO PLAYER (sidebar) ────────────────────────────────────────── */
+.audio-player {
+  padding: 0.6rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.ap-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ap-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ap-track-label {
+  font-family: var(--mono);
+  font-size: 0.48rem;
+  letter-spacing: 0.15em;
+  color: var(--dimmed);
+  text-transform: uppercase;
+}
+
+.ap-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.ap-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  flex-shrink: 0;
+  color: var(--text);
+}
+.ap-btn:hover {
+  border-color: var(--gold-dim);
+  background: rgba(201,169,110,0.08);
+  color: var(--gold);
+}
+
+.ap-play {
+  width: 32px;
+  height: 32px;
+  font-size: 0.7rem;
+  background: var(--card-high);
+}
+
+.ap-volume-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.2rem;
+}
+
+.ap-vol-icon {
+  font-size: 0.55rem;
+  opacity: 0.5;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ap-vol-slider {
+  flex: 1;
+  height: 3px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.ap-vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+}
+.ap-vol-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+  border: none;
+}
+
+/* ── MOBILE: trigger flotante + overlay ────────────────────────────── */
+.ap-mobile-trigger {
+  display: none;
+}
+
+.ap-mobile-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .audio-player { display: none; }
+
+  .ap-mobile-trigger {
+    display: flex;
+    position: fixed;
+    bottom: 5rem;
+    right: 1rem;
+    z-index: 60;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--card-high);
+    border: 1px solid var(--border-hi);
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--gold);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    transition: transform var(--trans-fast);
+  }
+  .ap-mobile-trigger:active { transform: scale(0.9); }
+
+  .ap-mobile-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: rgba(0,0,0,0.5);
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--trans-med);
+  }
+  .ap-mobile-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .ap-mobile-panel {
+    background: var(--surface);
+    border-radius: var(--radius) var(--radius) 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    width: 100%;
+    max-width: 400px;
+    padding: 1.5rem 2rem 2rem;
+    transform: translateY(100%);
+    transition: transform 0.3s var(--ease);
+    position: relative;
+  }
+  .ap-mobile-overlay.open .ap-mobile-panel {
+    transform: translateY(0);
+  }
+
+  .ap-mobile-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .ap-mobile-panel .ap-inner {
+    align-items: center;
+  }
+  .ap-mobile-panel .ap-controls { gap: 1rem; }
+  .ap-mobile-panel .ap-btn { width: 36px; height: 36px; font-size: 0.8rem; }
+  .ap-mobile-panel .ap-play { width: 44px; height: 44px; font-size: 0.9rem; }
+  .ap-mobile-panel .ap-volume-row { width: 100%; max-width: 200px; }
+  .ap-mobile-panel .ap-track-label { font-size: 0.55rem; }
+}
 
 /* ── Responsive 768px ── */
 @media (max-width: 768px) {
