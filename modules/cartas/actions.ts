@@ -17,12 +17,13 @@ export async function insertLetter(
   from_name: string,
   to_name: string,
   subject: string,
-  body: string
+  body: string,
+  mood: string | null
 ): Promise<{ success: boolean; error?: string; letter?: Letter }> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('letters')
-    .insert({ from_name, to_name, subject, body, unread: true })
+    .insert({ from_name, to_name, subject, body, unread: true, mood })
     .select()
     .single();
   if (error) return { success: false, error: error.message };
@@ -33,12 +34,13 @@ export async function insertLetter(
 export async function updateLetter(
   id: string,
   subject: string,
-  body: string
+  body: string,
+  mood: string | null
 ): Promise<{ success: boolean; error?: string; letter?: Letter }> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('letters')
-    .update({ subject, body })
+    .update({ subject, body, mood })
     .eq('id', id)
     .select()
     .single();
@@ -53,4 +55,10 @@ export async function deleteLetter(id: string): Promise<{ success: boolean; erro
   if (error) return { success: false, error: error.message };
   revalidatePath('/cartas');
   return { success: true };
+}
+
+export async function markLetterRead(id: string): Promise<void> {
+  const supabase = await createClient();
+  await supabase.from('letters').update({ unread: false }).eq('id', id);
+  revalidatePath('/cartas');
 }

@@ -1,26 +1,67 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useDeferredValue } from 'react';
 import { useRouter } from 'next/navigation';
-import { EmptyState } from '@/components/ui/EmptyState';
 import { Letter } from '../types';
-import { deleteLetter } from '../actions';
-import { LetterReaderModal } from './LetterReaderModal';
-import { WriteLetterModal } from './WriteLetterModal';
+import { deleteLetter, markLetterRead } from '../actions';
+import { CartasSidebar } from './CartasSidebar';
+import { CartasReader } from './CartasReader';
+import { CartasComposer } from './CartasComposer';
 
 interface CartasAppProps {
   initialLetters: Letter[];
+  currentUserName: string;
 }
 
-export function CartasApp({ initialLetters }: CartasAppProps) {
+export function CartasApp({ initialLetters, currentUserName }: CartasAppProps) {
   const [letters, setLetters] = useState(initialLetters);
-  const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
-  const [showWriteModal, setShowWriteModal] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showComposer, setShowComposer] = useState(false);
   const [editingLetter, setEditingLetter] = useState<Letter | null>(null);
+  const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'from' | 'to'>('all');
+  const [search, setSearch] = useState('');
+  const deferredSearch = useDeferredValue(search);
   const router = useRouter();
 
+  const filteredLetters = useMemo(() => {
+    let result = letters;
+    if (activeTab === 'unread') result = result.filter(l => l.unread);
+    if (activeTab === 'from') result = result.filter(l =>
+      l.from_name === currentUserName
+    );
+    if (activeTab === 'to') result = result.filter(l =>
+      l.to_name === currentUserName
+    );
+    const q = deferredSearch.trim().toLowerCase();
+    if (q) {
+      result = result.filter(l =>
+        l.subject.toLowerCase().includes(q) ||
+        l.body.toLowerCase().includes(q) ||
+        l.from_name.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [letters, activeTab, deferredSearch]);
+
+  const selectedLetter = useMemo(
+    () => letters.find(l => l.id === selectedId) ?? null,
+    [letters, selectedId]
+  );
+
+  const handleSelect = async (id: string) => {
+    setSelectedId(id);
+    const letter = letters.find(l => l.id === id);
+    if (letter?.unread) {
+      setLetters(prev => prev.map(l => l.id === id ? { ...l, unread: false } : l));
+      await markLetterRead(id);
+      router.refresh();
+    }
+  };
+
+  const handleBack = () => setSelectedId(null);
+
   const handleSaved = (letter?: Letter) => {
-    setShowWriteModal(false);
+    setShowComposer(false);
     setEditingLetter(null);
     if (letter) {
       setLetters(prev => {
@@ -28,89 +69,59 @@ export function CartasApp({ initialLetters }: CartasAppProps) {
         if (exists) return prev.map(l => (l.id === letter.id ? letter : l));
         return [letter, ...prev];
       });
+      setSelectedId(letter.id);
     }
     router.refresh();
   };
 
   const handleEdit = (letter: Letter) => {
-    setSelectedLetter(null);
+    if (letter.from_name !== currentUserName) return;
     setEditingLetter(letter);
-    setShowWriteModal(true);
+    setShowComposer(true);
   };
 
   const handleDelete = async (id: string) => {
+    const letter = letters.find(l => l.id === id);
+    if (letter && letter.from_name !== currentUserName) return;
     setLetters(prev => prev.filter(l => l.id !== id));
-    setSelectedLetter(null);
+    if (selectedId === id) setSelectedId(null);
     await deleteLetter(id);
     router.refresh();
   };
 
-  const formatLetterDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('es-ES', {
-      day: 'numeric', month: 'short', year: 'numeric',
-    });
-  };
-
-  const preview = (body: string, max = 100) =>
-    body.length > max ? body.slice(0, max) + '…' : body;
+  const hasSelectedOnMobile = !!selectedId;
+  const layoutClass = `cartas-layout${hasSelectedOnMobile ? ' letter-open' : ''}`;
 
   return (
-    <>
-      <div className="page-header">
-        <div>
-          <div className="page-subtitle">palabras del corazón</div>
-          <h1 className="page-title">Cartas</h1>
-        </div>
-        <div className="page-actions">
-          <button
-            className="btn btn-primary"
-            onClick={() => { setEditingLetter(null); setShowWriteModal(true); }}
-          >
-            ✍ Escribir carta
-          </button>
-        </div>
-      </div>
-
-      {letters.length === 0 ? (
-        <EmptyState
-          icon="💌"
-          title="Todavía no hay cartas"
-          subtitle="escribe la primera carta"
+    <div className="page active" style={{ padding: 0 }}>
+      <div className={layoutClass}>
+        <CartasSidebar
+          letters={filteredLetters}
+          selectedId={selectedId}
+          activeTab={activeTab}
+          search={search}
+          onSelect={handleSelect}
+          onTabChange={setActiveTab}
+          onSearchChange={setSearch}
+          onNewLetter={() => { setEditingLetter(null); setShowComposer(true); }}
         />
-      ) : (
-        <div className="gallery-grid">
-          {letters.map(letter => (
-            <div
-              key={letter.id}
-              className="card letter-card"
-              onClick={() => setSelectedLetter(letter)}
-            >
-              <div className="li-from">{letter.from_name}</div>
-              <div className="li-subject">{letter.subject}</div>
-              <div className="li-preview">{preview(letter.body)}</div>
-              <div className="li-date">{formatLetterDate(letter.created_at)}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {selectedLetter && (
-        <LetterReaderModal
+        <CartasReader
           letter={selectedLetter}
-          onClose={() => setSelectedLetter(null)}
+          currentUserName={currentUserName}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onBack={handleBack}
         />
-      )}
+      </div>
 
-      {showWriteModal && (
-        <WriteLetterModal
+      {showComposer && (
+        <CartasComposer
           editLetter={editingLetter}
-          onClose={() => { setShowWriteModal(false); setEditingLetter(null); }}
+          currentUserName={currentUserName}
+          onClose={() => { setShowComposer(false); setEditingLetter(null); }}
           onSaved={handleSaved}
         />
       )}
-    </>
+    </div>
   );
 }
