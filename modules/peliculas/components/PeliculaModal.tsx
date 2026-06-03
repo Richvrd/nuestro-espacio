@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Movie, RATINGS, RATING_COLORS } from '../types';
 import { updateMovie, deleteMovie } from '../actions';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/useToast';
+import { useLoading } from '@/hooks/useLoading';
 
 interface PeliculaModalProps {
   movie: Movie;
@@ -19,6 +21,8 @@ export function PeliculaModal({ movie, currentUserName, onClose, onUpdated, onDe
   const [editNotes, setEditNotes] = useState(movie.notes || '');
   const [editWatchedAt, setEditWatchedAt] = useState(movie.watched_at || '');
   const [saving, setSaving] = useState(false);
+  const toast = useToast();
+  const loading = useLoading();
   const router = useRouter();
 
   const handleKey = useCallback((e: KeyboardEvent) => {
@@ -36,24 +40,46 @@ export function PeliculaModal({ movie, currentUserName, onClose, onUpdated, onDe
 
   const handleSave = async () => {
     setSaving(true);
-    const result = await updateMovie(movie.id, {
-      rating: editRating,
-      notes: editNotes || null,
-      watched_at: editWatchedAt || null,
-    });
-    setSaving(false);
-    if (result.success) {
-      onUpdated(movie.id, { rating: editRating, notes: editNotes || null, watched_at: editWatchedAt || null });
-      setEditing(false);
-      router.refresh();
+    loading.show('Guardando...');
+    try {
+      const result = await updateMovie(movie.id, {
+        rating: editRating,
+        notes: editNotes || null,
+        watched_at: editWatchedAt || null,
+      });
+      if (result.success) {
+        toast.success('Calificación guardada');
+        onUpdated(movie.id, { rating: editRating, notes: editNotes || null, watched_at: editWatchedAt || null });
+        setEditing(false);
+        router.refresh();
+      } else {
+        toast.error('Algo salió mal, intenta de nuevo');
+      }
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+    } finally {
+      setSaving(false);
+      loading.hide();
     }
   };
 
   const handleDelete = async () => {
-    onDeleted(movie.id);
-    await deleteMovie(movie.id);
-    onClose();
-    router.refresh();
+    loading.show('Eliminando...');
+    try {
+      const result = await deleteMovie(movie.id);
+      if (result.success) {
+        toast.success('Película eliminada');
+        onDeleted(movie.id);
+        onClose();
+        router.refresh();
+      } else {
+        toast.error('No se pudo eliminar');
+      }
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+    } finally {
+      loading.hide();
+    }
   };
 
   const formatDate = (d: string | null) => {

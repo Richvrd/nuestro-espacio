@@ -144,11 +144,12 @@ export async function deleteAlbum(id: string): Promise<{ success: boolean; error
   return error ? { success: false, error: error.message } : { success: true };
 }
 
-export async function toggleSpecialMomento(photoId: string, current: boolean) {
+export async function toggleSpecialMomento(photoId: string, current: boolean): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();
   const { error } = await supabase
     .from('photos')
     .update({ is_special: !current })
     .eq('id', photoId);
-  if (error) throw new Error(error.message);
+  if (error) return { success: false, error: error.message };
+  return { success: true };
 }

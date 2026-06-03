@@ -3,6 +3,7 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useToast } from '@/hooks/useToast';
 
 function EyeIcon({ open }: { open: boolean }) {
   return (
@@ -26,6 +27,7 @@ function EyeIcon({ open }: { open: boolean }) {
 export function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPwd, setShowPwd] = useState(false);
@@ -50,12 +52,16 @@ export function LoginForm() {
       });
 
       if (authError) {
-        setError(mapError(authError.message));
+        const msg = mapError(authError.message);
+        setError(msg);
+        toast.error(msg);
       } else {
         router.push('/inicio');
       }
     } catch {
-      setError('Algo salió mal, intenta de nuevo');
+      const msg = 'Algo salió mal, intenta de nuevo';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

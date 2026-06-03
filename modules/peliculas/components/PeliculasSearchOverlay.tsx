@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { COUPLE } from '@/lib/constants';
 import { addMovie } from '../actions';
 import { TmdbResult, RATINGS, RATING_COLORS, Movie } from '../types';
+import { useToast } from '@/hooks/useToast';
+import { useLoading as useAppLoading } from '@/hooks/useLoading';
 
 interface PeliculasSearchOverlayProps {
   existingTmdbIds: Set<number>;
@@ -24,6 +26,8 @@ export function PeliculasSearchOverlay({
   const [addedBy, setAddedBy] = useState(currentUserName);
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
+  const toast = useToast();
+  const appLoading = useAppLoading();
 
   const handleKey = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape' && !saving) onClose();
@@ -68,23 +72,37 @@ export function PeliculasSearchOverlay({
   const handleSave = async () => {
     if (!selected) return;
     setSaving(true);
-    const result = await addMovie({
-      tmdb_id: selected.tmdb_id,
-      title: selected.title,
-      year: selected.year,
-      poster_url: selected.poster_url,
-      overview: selected.overview,
-      vote_avg: selected.vote_avg,
-      genres: null,
-      runtime: null,
-      director: null,
-      rating,
-      notes: notes || null,
-      watched_at: watchedAt || null,
-      added_by: addedBy,
-    });
-    setSaving(false);
-    if (result.success && result.movie) onSaved(result.movie);
+    appLoading.show('Guardando película...');
+    try {
+      const result = await addMovie({
+        tmdb_id: selected.tmdb_id,
+        title: selected.title,
+        year: selected.year,
+        poster_url: selected.poster_url,
+        overview: selected.overview,
+        vote_avg: selected.vote_avg,
+        genres: null,
+        runtime: null,
+        director: null,
+        rating,
+        notes: notes || null,
+        watched_at: watchedAt || null,
+        added_by: addedBy,
+      });
+      if (result.success && result.movie) {
+        toast.success('Película añadida a vuestra lista');
+        onSaved(result.movie);
+      } else if (result.error === 'duplicate') {
+        toast.warning('Esta película ya está en vuestra lista');
+      } else {
+        toast.error('Algo salió mal, intenta de nuevo');
+      }
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+    } finally {
+      setSaving(false);
+      appLoading.hide();
+    }
   };
 
   if (selected) {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '@/components/ui/Toast';
+import { useToast } from '@/hooks/useToast';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Capsule, getCapsuleStatus } from '../types';
 import { useCapsulas } from '../hooks/useCapsulas';
@@ -17,8 +17,8 @@ interface CapsulasAppProps {
 }
 
 export function CapsulasApp({ initialCapsulas }: CapsulasAppProps) {
-  const { capsulas, loading, saving, refresh, createCapsula, enviarAlEspacio, restaurar } = useCapsulas(initialCapsulas);
-  const { showToast } = useToast();
+  const { capsulas, loading, saving, refresh, createCapsula, enviarAlEspacio } = useCapsulas(initialCapsulas);
+  const toast = useToast();
 
   const [showNewModal, setShowNewModal] = useState(false);
   const [confirmData, setConfirmData] = useState<CapsulaFormData | null>(null);
@@ -38,12 +38,12 @@ export function CapsulasApp({ initialCapsulas }: CapsulasAppProps) {
       }
     });
     if (changed) {
-      showToast('💌 ¡una cápsula se acaba de abrir!');
+      toast.success('💌 ¡una cápsula se acaba de abrir!');
       refresh().then(() => {
         setTimeout(() => setJustOpenedIds(new Set()), 2000);
       });
     }
-  }, [capsulas, refresh, showToast, justOpenedIds]);
+  }, [capsulas, refresh, toast, justOpenedIds]);
 
   useEffect(() => {
     const id = setInterval(checkAutoUnlock, 1000);
@@ -59,13 +59,13 @@ export function CapsulasApp({ initialCapsulas }: CapsulasAppProps) {
     await createCapsula(confirmData.subject, confirmData.toName, confirmData.body, dateTime);
     setConfirmData(null);
     setShowNewModal(false);
-    showToast('🔒 cápsula sellada y guardada');
+    toast.success('🔒 cápsula sellada y guardada');
   };
 
   const handleSendToSpace = (id: string) => {
     enviarAlEspacio(id);
     setSelectedCapsule(null);
-    showToast('🚀 cápsula enviada al espacio');
+    toast.success('🚀 cápsula enviada al espacio');
   };
 
   const handleRestore = () => {

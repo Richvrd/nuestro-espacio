@@ -36,13 +36,13 @@ export function WriteLetterModal({ onClose, onSaved, editLetter }: WriteLetterMo
     setLoading(true);
 
     if (isEdit && editLetter) {
-      const result = await updateLetter(editLetter.id, subject.trim(), body.trim());
+      const result = await updateLetter(editLetter.id, subject.trim(), body.trim(), null);
       setLoading(false);
       if (result.success) onSaved(result.letter);
       else onClose();
     } else {
       const fromName = toName === COUPLE.name1 ? COUPLE.name2 : COUPLE.name1;
-      const result = await insertLetter(fromName, toName, subject.trim(), body.trim());
+      const result = await insertLetter(fromName, toName, subject.trim(), body.trim(), null);
       setLoading(false);
       if (result.success) onSaved(result.letter);
       else onClose();

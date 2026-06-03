@@ -9,7 +9,7 @@ export async function getMovies(): Promise<Movie[]> {
   const { data } = await supabase
     .from('movies')
     .select('*')
-    .order('watched_at', { ascending: false, nullsLast: true })
+    .order('watched_at', { ascending: false })
     .order('created_at', { ascending: false });
   return data || [];
 }
@@ -53,9 +53,9 @@ export async function addMovie(data: {
 export async function updateMovie(
   id: string,
   data: {
-    rating?: Movie['rating'];
-    notes?: string;
-    watched_at?: string;
+    rating?: Movie['rating'] | null;
+    notes?: string | null;
+    watched_at?: string | null;
   }
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();

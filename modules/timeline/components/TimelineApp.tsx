@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { useToast } from '@/components/ui/Toast';
+import { useToast } from '@/hooks/useToast';
 import { EmptyState } from '@/components/ui/EmptyState';
 import type { Moment } from '../types';
 import { getMomentYear } from '../types';
@@ -23,7 +23,7 @@ interface TimelineAppProps {
 
 export function TimelineApp({ initialMoments }: TimelineAppProps) {
   const { moments, loading, saving, refresh, create, update, remove } = useMoments(initialMoments);
-  const { showToast } = useToast();
+  const toast = useToast();
 
   const [selectedYear, setSelectedYear] = useState<number | 'all'>('all');
   const [slideDir, setSlideDir] = useState<'next' | 'prev' | null>(null);
@@ -62,21 +62,21 @@ export function TimelineApp({ initialMoments }: TimelineAppProps) {
   const handleCreate = async (payload: Parameters<typeof create>[0]) => {
     await create(payload);
     setModalState(null);
-    showToast('✨ momento guardado');
+    toast.success('✨ momento guardado');
   };
 
   const handleEdit = async (payload: Parameters<typeof create>[0]) => {
     if (modalState?.mode !== 'edit') return;
-    await update(modalState.moment.id, payload);
+    await update(modalState.moment.id, payload as Parameters<typeof update>[1]);
     setModalState(null);
-    showToast('✎ momento actualizado');
+    toast.success('✎ momento actualizado');
   };
 
   const handleDelete = async () => {
     if (modalState?.mode !== 'delete') return;
     await remove(modalState.momentId);
     setModalState(null);
-    showToast('🗑 momento eliminado');
+    toast.success('🗑 momento eliminado');
   };
 
   const handleYearChange = useCallback((year: number | 'all') => {

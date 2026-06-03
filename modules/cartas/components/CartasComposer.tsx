@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { COUPLE } from '@/lib/constants';
 import { insertLetter, updateLetter } from '../actions';
 import { Letter, MOODS } from '../types';
+import { useToast } from '@/hooks/useToast';
+import { useLoading as useAppLoading } from '@/hooks/useLoading';
 
 interface CartasComposerProps {
   onClose: () => void;
@@ -23,11 +25,13 @@ export function CartasComposer({ onClose, onSaved, editLetter, currentUserName }
   const [subject, setSubject] = useState(editLetter?.subject || '');
   const [body, setBody] = useState(editLetter?.body || '');
   const [mood, setMood] = useState<string | null>(editLetter?.mood || null);
-  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const toast = useToast();
+  const appLoading = useAppLoading();
 
   const handleKey = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape' && !loading) onClose();
-  }, [onClose, loading]);
+    if (e.key === 'Escape' && !saving) onClose();
+  }, [onClose, saving]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKey);
@@ -39,19 +43,27 @@ export function CartasComposer({ onClose, onSaved, editLetter, currentUserName }
   }, [handleKey]);
 
   const handleSubmit = async () => {
-    if (!subject.trim() || !body.trim() || loading) return;
-    setLoading(true);
+    if (!subject.trim() || !body.trim() || saving) return;
+    setSaving(true);
+    appLoading.show('Guardando carta...');
 
-    if (isEdit && editLetter) {
-      const result = await updateLetter(editLetter.id, subject.trim(), body.trim(), mood);
-      setLoading(false);
-      if (result.success) onSaved(result.letter);
-      else onClose();
-    } else {
-      const result = await insertLetter(fromName, toName, subject.trim(), body.trim(), mood);
-      setLoading(false);
-      if (result.success) onSaved(result.letter);
-      else onClose();
+    try {
+      let result;
+      if (isEdit && editLetter) {
+        result = await updateLetter(editLetter.id, subject.trim(), body.trim(), mood);
+      } else {
+        result = await insertLetter(fromName, toName, subject.trim(), body.trim(), mood);
+      }
+      if (result.success) {
+        onSaved(result.letter);
+      } else {
+        toast.error('Algo salió mal, intenta de nuevo');
+      }
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+    } finally {
+      setSaving(false);
+      appLoading.hide();
     }
   };
 
@@ -95,7 +107,7 @@ export function CartasComposer({ onClose, onSaved, editLetter, currentUserName }
               value={subject}
               onChange={e => setSubject(e.target.value)}
               placeholder="Una cosa que quiero decirte..."
-              disabled={loading}
+              disabled={saving}
               autoFocus
             />
           </div>
@@ -134,7 +146,7 @@ export function CartasComposer({ onClose, onSaved, editLetter, currentUserName }
               value={body}
               onChange={e => setBody(e.target.value)}
               placeholder="Escribe lo que sientes..."
-              disabled={loading}
+              disabled={saving}
             />
             <span className="cartas-composer-charcount">{body.length} caracteres</span>
           </div>
@@ -143,11 +155,11 @@ export function CartasComposer({ onClose, onSaved, editLetter, currentUserName }
         <div className="cartas-composer-divider" />
 
         <div className="cartas-composer-actions">
-          <button className="btn btn-ghost" onClick={onClose} disabled={loading}>
+          <button className="btn btn-ghost" onClick={onClose} disabled={saving}>
             Cancelar
           </button>
-          <button className="btn btn-primary" onClick={handleSubmit} disabled={loading || !subject.trim() || !body.trim()}>
-            {loading ? (
+          <button className="btn btn-primary" onClick={handleSubmit} disabled={saving || !subject.trim() || !body.trim()}>
+            {saving ? (
               <span className="btn-loading"><span className="spinner" /> guardando...</span>
             ) : (
               'guardar carta'

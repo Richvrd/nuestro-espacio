@@ -11,6 +11,8 @@ import { AlbumModal } from './AlbumModal';
 import { UploadModal } from './UploadModal';
 import { TimelineView } from './TimelineView';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { useToast } from '@/hooks/useToast';
+import { useLoading } from '@/hooks/useLoading';
 
 interface GaleriaGridProps {
   initialPhotos: Photo[];
@@ -28,6 +30,9 @@ export function GaleriaGrid({ initialPhotos, initialAlbums }: GaleriaGridProps) 
   const [uploadOpen, setUploadOpen] = useState(false);
   const [openPhotoId, setOpenPhotoId] = useState<string | null>(null);
   const [openAlbumId, setOpenAlbumId] = useState<string | null>(null);
+
+  const toast = useToast();
+  const loading = useLoading();
 
   const {
     photos, albums,
@@ -88,15 +93,108 @@ export function GaleriaGrid({ initialPhotos, initialAlbums }: GaleriaGridProps) 
   }), [photos, albums]);
 
   const handleToggleSpecial = useCallback(async (photo: Photo) => {
+    loading.show('Actualizando...');
     try {
-      await toggleSpecialMomento(photo.id, photo.is_special);
-      await refresh();
+      const result = await toggleSpecialMomento(photo.id, photo.is_special);
+      if (result.success) {
+        await refresh();
+      } else {
+        toast.error('No se pudo actualizar');
+      }
     } catch {
-      // Silently fail
+      toast.error('Algo salió mal, intenta de nuevo');
+    } finally {
+      loading.hide();
     }
-  }, [refresh]);
+  }, [refresh, toast, loading]);
 
-  const total = photos.length + albums.length;
+  const wrappedUploadPhoto = useCallback(async (file: File, title: string, caption: string) => {
+    loading.show('Subiendo foto...');
+    try {
+      const result = await uploadFoto(file, title, caption);
+      if (result.success) toast.success('Foto subida correctamente');
+      else toast.error('No se pudo subir la foto');
+      return result;
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+      return { success: false, error: 'Error' };
+    } finally {
+      loading.hide();
+    }
+  }, [uploadFoto, toast, loading]);
+
+  const wrappedUploadAlbum = useCallback(async (files: File[], title: string, caption: string) => {
+    loading.show('Creando álbum...');
+    try {
+      const result = await uploadAlbum(files, title, caption);
+      if (result.success) toast.success('Álbum creado correctamente');
+      else toast.error('No se pudo subir el álbum');
+      return result;
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+      return { success: false, error: 'Error' };
+    } finally {
+      loading.hide();
+    }
+  }, [uploadAlbum, toast, loading]);
+
+  const wrappedEditFoto = useCallback(async (id: string, title: string, caption: string) => {
+    loading.show('Guardando...');
+    try {
+      const result = await editFoto(id, title, caption);
+      if (result.success) toast.success('Foto actualizada');
+      else toast.error('No se pudo guardar');
+      return result;
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+      return { success: false };
+    } finally {
+      loading.hide();
+    }
+  }, [editFoto, toast, loading]);
+
+  const wrappedDeleteFoto = useCallback(async (id: string) => {
+    loading.show('Eliminando...');
+    try {
+      const result = await deleteFoto(id);
+      if (result.success) toast.success('Foto eliminada');
+      else toast.error('No se pudo eliminar');
+      return result;
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+      return { success: false };
+    } finally {
+      loading.hide();
+    }
+  }, [deleteFoto, toast, loading]);
+
+  const wrappedEditAlbum = useCallback(async (id: string, title: string, caption: string) => {
+    loading.show('Guardando...');
+    try {
+      const result = await editAlbum(id, title, caption);
+      if (result.success) toast.success('Álbum actualizado');
+      else toast.error('No se pudo guardar');
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+    } finally {
+      loading.hide();
+    }
+  }, [editAlbum, toast, loading]);
+
+  const wrappedDeleteAlbum = useCallback(async (id: string) => {
+    loading.show('Eliminando...');
+    try {
+      const result = await deleteAlbum(id);
+      if (result.success) toast.success('Álbum eliminado');
+      else toast.error('No se pudo eliminar');
+      return result;
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+      return { success: false };
+    } finally {
+      loading.hide();
+    }
+  }, [deleteAlbum, toast, loading]);
 
   return (
     <>
@@ -191,8 +289,8 @@ export function GaleriaGrid({ initialPhotos, initialAlbums }: GaleriaGridProps) 
       {uploadOpen && (
         <UploadModal
           onClose={() => setUploadOpen(false)}
-          onUploadPhoto={uploadFoto}
-          onUploadAlbum={uploadAlbum}
+          onUploadPhoto={wrappedUploadPhoto}
+          onUploadAlbum={wrappedUploadAlbum}
         />
       )}
 
@@ -200,8 +298,8 @@ export function GaleriaGrid({ initialPhotos, initialAlbums }: GaleriaGridProps) 
         <FotoModal
           photo={openPhoto}
           onClose={() => setOpenPhotoId(null)}
-          onEdit={editFoto}
-          onDelete={deleteFoto}
+          onEdit={wrappedEditFoto}
+          onDelete={wrappedDeleteFoto}
         />
       )}
 
@@ -209,9 +307,9 @@ export function GaleriaGrid({ initialPhotos, initialAlbums }: GaleriaGridProps) 
         <AlbumModal
           album={openAlbum}
           onClose={() => setOpenAlbumId(null)}
-          onEditAlbum={editAlbum}
-          onDeletePhoto={deleteFoto}
-          onDeleteAlbum={deleteAlbum}
+          onEditAlbum={wrappedEditAlbum}
+          onDeletePhoto={wrappedDeleteFoto}
+          onDeleteAlbum={wrappedDeleteAlbum}
         />
       )}
     </>

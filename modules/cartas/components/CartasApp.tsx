@@ -7,6 +7,8 @@ import { deleteLetter, markLetterRead } from '../actions';
 import { CartasSidebar } from './CartasSidebar';
 import { CartasReader } from './CartasReader';
 import { CartasComposer } from './CartasComposer';
+import { useToast } from '@/hooks/useToast';
+import { useLoading } from '@/hooks/useLoading';
 
 interface CartasAppProps {
   initialLetters: Letter[];
@@ -21,6 +23,8 @@ export function CartasApp({ initialLetters, currentUserName }: CartasAppProps) {
   const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'from' | 'to'>('all');
   const [search, setSearch] = useState('');
   const deferredSearch = useDeferredValue(search);
+  const toast = useToast();
+  const loading = useLoading();
   const router = useRouter();
 
   const filteredLetters = useMemo(() => {
@@ -64,6 +68,7 @@ export function CartasApp({ initialLetters, currentUserName }: CartasAppProps) {
     setShowComposer(false);
     setEditingLetter(null);
     if (letter) {
+      toast.success('Carta guardada');
       setLetters(prev => {
         const exists = prev.find(l => l.id === letter.id);
         if (exists) return prev.map(l => (l.id === letter.id ? letter : l));
@@ -83,10 +88,19 @@ export function CartasApp({ initialLetters, currentUserName }: CartasAppProps) {
   const handleDelete = async (id: string) => {
     const letter = letters.find(l => l.id === id);
     if (letter && letter.from_name !== currentUserName) return;
-    setLetters(prev => prev.filter(l => l.id !== id));
-    if (selectedId === id) setSelectedId(null);
-    await deleteLetter(id);
-    router.refresh();
+    loading.show('Eliminando...');
+    try {
+      const result = await deleteLetter(id);
+      if (result.success) toast.success('Carta eliminada');
+      else toast.error('No se pudo eliminar');
+      setLetters(prev => prev.filter(l => l.id !== id));
+      if (selectedId === id) setSelectedId(null);
+      router.refresh();
+    } catch {
+      toast.error('Algo salió mal, intenta de nuevo');
+    } finally {
+      loading.hide();
+    }
   };
 
   const hasSelectedOnMobile = !!selectedId;
