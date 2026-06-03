@@ -36,7 +36,6 @@ export function AudioPlayer() {
   const labelRef = useRef<HTMLSpanElement>(null);
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.4);
-  const [started, setStarted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [playlist, setPlaylist] = useState<string[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -60,20 +59,6 @@ export function AudioPlayer() {
       })
       .catch(() => setLoaded(true));
   }, []);
-
-  useEffect(() => {
-    if (started) return;
-    const handler = () => {
-      if (!started && audioRef.current && playlist.length > 0) {
-        audioRef.current.volume = volume;
-        audioRef.current.play().catch(() => {});
-        setPlaying(true);
-        setStarted(true);
-      }
-    };
-    document.addEventListener('click', handler, { once: true });
-    return () => document.removeEventListener('click', handler);
-  }, [started, volume, playlist]);
 
   useEffect(() => {
     const el = audioRef.current;
@@ -251,7 +236,7 @@ export function AudioPlayer() {
 
       <button className="ap-mobile-trigger" onClick={() => setMobileOpen(o => !o)}
         aria-label="Reproductor de música">
-        {playing ? '♪' : '♩'}
+        {playing ? '🎶' : '🎶'}
       </button>
       <div className={`ap-mobile-overlay ${mobileOpen ? 'open' : ''}`}
         onClick={() => setMobileOpen(false)}>

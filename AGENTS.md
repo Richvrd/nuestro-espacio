@@ -36,6 +36,7 @@ Each feature lives in `modules/<name>/` with `components/`, `hooks/`, `actions.t
 | `cartas` | Complete | types.ts, actions.ts (CRUD), CartasApp, LetterReaderModal, WriteLetterModal |
 | `timeline` | Complete | types.ts, actions.ts (CRUD), useMoments.ts, TimelineApp/YearFilter/TimelineView/MomentCard/MomentNode/AddBetweenButton/YearSeparator/MomentModal/DeleteConfirmModal |
 | `musica` | Scaffold only | Empty `components/` + `hooks/` |
+| `peliculas` | Scaffold only | types.ts, actions.ts (CRUD), index.ts, empty `components/` + `hooks/` |
 | `juegos` | Scaffold only | Empty `components/` + `hooks/` |
 
 ## Gotchas

@@ -13,6 +13,8 @@ nuestro-espacio/
 │   │   │   └── page.tsx
 │   │   ├── musica/
 │   │   │   └── page.tsx
+│   │   ├── peliculas/
+│   │   │   └── page.tsx
 │   │   ├── cartas/
 │   │   │   ├── page.tsx          # Lista de cartas
 │   │   │   └── [id]/
@@ -57,6 +59,15 @@ nuestro-espacio/
 │   │   │   └── EscribirCarta.tsx
 │   │   ├── hooks/
 │   │   │   └── useCartas.ts
+│   │   ├── actions.ts
+│   │   ├── types.ts
+│   │   └── index.ts
+│   │
+│   ├── peliculas/
+│   │   ├── components/
+│   │   │   └── PeliculasList.tsx
+│   │   ├── hooks/
+│   │   │   └── usePeliculas.ts
 │   │   ├── actions.ts
 │   │   ├── types.ts
 │   │   └── index.ts
