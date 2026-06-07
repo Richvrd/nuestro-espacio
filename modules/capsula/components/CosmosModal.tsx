@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '@/components/ui/Toast';
+import { useToast } from '@/hooks/useToast';
 import { getCapsulasEspacio, restoreCapsula } from '../actions';
 
 interface SpaceCapsule {
@@ -27,7 +27,7 @@ export function CosmosModal({ onClose, onRestore }: CosmosModalProps) {
   const [capsulas, setCapsulas] = useState<SpaceCapsule[]>([]);
   const [loading, setLoading] = useState(true);
   const [restoring, setRestoring] = useState<string | null>(null);
-  const { showToast } = useToast();
+  const toast = useToast();
 
   const handleKey = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') onClose();
@@ -51,7 +51,7 @@ export function CosmosModal({ onClose, onRestore }: CosmosModalProps) {
     await restoreCapsula(id);
     setCapsulas(prev => prev.filter(c => c.id !== id));
     setRestoring(null);
-    showToast('✨ cápsula restaurada a tu colección');
+    toast.success('✨ cápsula restaurada a tu colección');
     onRestore();
   };
 

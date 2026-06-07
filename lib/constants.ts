@@ -6,6 +6,7 @@ export const COUPLE = {
 
 export const USER_EMAIL_MAP: Record<string, string> = {
   'ricardoskypoblete@gmail.com': 'Ricardo',
+  'saraijara3768@gmail.com': 'Sarai',
 };
 
 export function formatDate(date: Date): string {
