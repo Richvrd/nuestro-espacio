@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { COUPLE } from '@/lib/constants';
+import { COUPLE, USER_EMAIL_MAP } from '@/lib/constants';
 import { OrbitCanvas } from '@/modules/inicio/components/OrbitCanvas';
 import { HeroCounter } from '@/modules/inicio/components/HeroCounter';
 import { WishButton } from '@/modules/inicio/components/WishButton';
@@ -260,6 +260,10 @@ async function CapsulasPanel() {
 /* ── Page ───────────────────────────────────────────────────────── */
 
 export default async function InicioPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const currentUserName = user?.email ? (USER_EMAIL_MAP[user.email] || user.email) : undefined;
+
   const hero = (
     <div className="home-hero">
       <OrbitCanvas />
@@ -316,7 +320,7 @@ export default async function InicioPage() {
 
   return (
     <div id="page-home" className="page active">
-      <InicioSections hero={hero} panels={panels} />
+      <InicioSections hero={hero} panels={panels} currentUserName={currentUserName} />
     </div>
   );
 }

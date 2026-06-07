@@ -1,6 +1,8 @@
 'use client';
 
 import { ReactNode, useRef, useEffect, useState, useCallback } from 'react';
+import AnniversaryEvent, { type AnniversaryEventHandle } from '@/modules/inicio/components/AnniversaryEvent';
+import { checkAndClaimAnniversaryEvent } from '@/modules/inicio/actions/anniversaryActions';
 
 interface PanelData {
   tag: string;
@@ -15,13 +17,24 @@ interface PanelData {
 interface InicioSectionsProps {
   hero: ReactNode;
   panels: PanelData[];
+  currentUserName?: string;
 }
 
-export function InicioSections({ hero, panels }: InicioSectionsProps) {
+export function InicioSections({ hero, panels, currentUserName }: InicioSectionsProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const anniversaryRef = useRef<AnniversaryEventHandle>(null);
+
+  useEffect(() => {
+    if (!currentUserName) return;
+    checkAndClaimAnniversaryEvent(currentUserName).then(({ shouldFire }) => {
+      if (shouldFire) {
+        setTimeout(() => anniversaryRef.current?.trigger(), 800);
+      }
+    });
+  }, [currentUserName]);
 
   const allPanels = panels.length;
 
@@ -65,8 +78,12 @@ export function InicioSections({ hero, panels }: InicioSectionsProps) {
     return () => observer.disconnect();
   }, [allPanels]);
 
+  const [searchParams] = useState(typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null);
+  const showTestBtn = process.env.NODE_ENV === 'development' || searchParams?.get('preview') === '1';
+
   return (
     <>
+      <AnniversaryEvent ref={anniversaryRef} />
       <div className="inicio-scroll-wrap" ref={wrapRef}>
         {/* Panel 1 — Hero */}
         <div className="inicio-panel" data-panel-idx={0} ref={el => { panelRefs.current[0] = el; }}>
@@ -128,6 +145,15 @@ export function InicioSections({ hero, panels }: InicioSectionsProps) {
             onClick={() => scrollTo(idx)} aria-label={`Panel ${idx + 1}`} />
         ))}
       </nav>
+
+      {showTestBtn && (
+        <button
+          className="anniversary-test-btn"
+          onClick={() => anniversaryRef.current?.trigger()}
+        >
+          ✦ test: cumple-mes
+        </button>
+      )}
     </>
   );
 }
