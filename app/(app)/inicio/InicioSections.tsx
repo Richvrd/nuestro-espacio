@@ -78,9 +78,6 @@ export function InicioSections({ hero, panels, currentUserName }: InicioSections
     return () => observer.disconnect();
   }, [allPanels]);
 
-  const [searchParams] = useState(typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null);
-  const showTestBtn = process.env.NODE_ENV === 'development' || searchParams?.get('preview') === '1';
-
   return (
     <>
       <AnniversaryEvent ref={anniversaryRef} />
@@ -146,14 +143,7 @@ export function InicioSections({ hero, panels, currentUserName }: InicioSections
         ))}
       </nav>
 
-      {showTestBtn && (
-        <button
-          className="anniversary-test-btn"
-          onClick={() => anniversaryRef.current?.trigger()}
-        >
-          ✦ test: cumple-mes
-        </button>
-      )}
+
     </>
   );
 }

@@ -6476,24 +6476,3 @@ nav {
   60%  { opacity: 0.7; }
   100% { opacity: 0;   transform: translateY(var(--rise)) scale(0.6) rotate(calc(var(--rot) - 10deg)); }
 }
-
-/* ── TEMP: remove after QA ── */
-.anniversary-test-btn {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 1.5rem;
-  z-index: 9999;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--dimmed);
-  font-family: var(--mono);
-  font-size: 0.5rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  cursor: pointer;
-  opacity: 0.4;
-  transition: opacity 0.2s;
-}
-.anniversary-test-btn:hover { opacity: 1; }
