@@ -1,40 +1,36 @@
 # Pendientes
 
-Pendientes detectados en la sesión de análisis de graphify (2026-08-15). Revisar antes de continuar con nuevos cambios.
+Seguimiento de pendientes. Última revisión: 2026-08-16.
 
-## 1. Reconstruir el grafo de graphify desde cero
+## 1. Reconstruir el grafo de graphify desde cero — ✅ HECHO (2026-08-16)
 
-- [ ] Ejecutar `/graphify .` en la raíz del proyecto (no `--update`: la ruta cambió y el esquema de extracción es distinto).
-- **Motivo**: el grafo actual (`graphify-out/`) está desactualizado:
-  - Fue construido desde la ruta vieja `~/Documentos/proyecto_love_espacio_v2/nuestro-espacio/` (el proyecto se movió).
-  - Data del 23-24 may 2026 y quedó ~25 commits atrás; no incluye los módulos `capsula`, `cartas`, `timeline`, `peliculas` (ya completos), ni `musica`/`juegos`.
-  - La extracción semántica nunca se registró (`cost.json` en 0 tokens → grafo casi solo AST).
-  - Contiene `file_type` obsoletos (`concept`, `rationale`) que la spec 0.9.32 ya prohíbe.
-  - 43% de nodos aislados (76/178) y 13 de 22 comunidades sin etiquetar.
+- [x] Ejecutado `/graphify .` completo con la spec 0.9.32 (skill nuevo).
+- **Resultado**: 499 nodos · 996 edges · 54 comunidades.
+- **Extra** (decisión tomada durante el rebuild): se creó `.graphifyignore` excluyendo `.agents/` y `public/`. Sin él el corpus era 301 archivos/105k palabras con 164 docs de la librería de skills, 4 MP3 (dispararían transcripción Whisper) y 5 SVGs de boilerplate. Con el ignore: 126 archivos/33k palabras, solo proyecto real.
 
-## 2. Verificar la calidad del grafo reconstruido
+## 2. Verificar la calidad del grafo reconstruido — ✅ HECHO
 
-Tras el paso 1, comprobar:
-- [ ] `graphify-out/cost.json` ya no está en 0 tokens (la extracción semántica debe registrarse).
-- [ ] No hay `file_type` tipo `concept`/`rationale` (solo `code|document|paper|image`).
-- [ ] Todas las comunidades están etiquetadas (ninguna queda como "Community N").
-- [ ] Aparecen los módulos `capsula`, `cartas`, `timeline`, `peliculas` como comunidades.
+- [x] `file_type` válidos: solo `code` (493) y `document` (6). Ninguno inválido.
+- [x] Todas las 54 comunidades etiquetadas (0-53, sin "Community N").
+- [x] Módulos presentes en el grafo: `capsula` (27), `cartas` (24), `galeria` (21), `peliculas` (19), `timeline` (12), `inicio` (11), `supabase` (6), `musica` (3), `juegos` (3), `middleware` (3).
+- [x] Extracción semántica SÍ corrió (38 nodos semánticos desde 7 docs; antes eran 0). Caché guardada.
+- [~] `cost.json` sigue en 0 tokens — **no** es señal de que la semántica no corrió (sí corrió). Es una limitación de contabilidad: el subagente de extracción no puede medir su propio uso de tokens y reporta 0. No hay forma de arreglarlo vía este pipeline salvo setear `GEMINI_API_KEY` (usaría `extract_corpus_parallel` y sí registraría tokens).
+- Calidad general: god nodes significativos (`createClient` 45, `useToast` 19, `COUPLE`/`Letter`/`Photo`/`Capsule`/`Moment`/`Album`/`Movie` 11-14), 0 ciclos de import, 106 nodos aislados (21%, antes 43%), benchmark 11x menos tokens por query.
 
-## 3. Decidir qué hacer con `.opencode/`
+## 3. Decidir qué hacer con `.opencode/` — ✅ HECHO (commit `bcf98ce`)
 
-Creado por `graphify install --platform opencode` (está untracked en git). Contiene:
-- `.opencode/opencode.json` — registra el plugin graphify.
-- `.opencode/plugins/graphify.js` — hook `tool.execute.before` que sugiere `graphify query` antes de comandos bash.
+- [x] Decisión: **commitearlo** (opencode.json + plugins/graphify.js). El plugin ya se activó en la sesión (recordatorio antes de comandos bash cuando existe `graphify-out/graph.json`).
+- `graphify-out/` permanece en `.gitignore` (no se versiona).
 
-Opciones (elegir una):
-- [ ] Commitearlo (útil: avisa de usar el grafo en vez de grepear).
-- [ ] Añadirlo a `.gitignore` (mantenerlo local sin versionar).
-- [ ] Borrarlo (el skill funciona sin el plugin).
+## 4. Evaluar si el grafo aporta valor para este corpus — ✅ HECHO
 
-## 4. Evaluar si el grafo aporta valor para este corpus
-
-- [ ] El corpus es de ~8k palabras y el reporte anterior advertía "you may not need a graph". Tras reconstruir, decidir si mantener `graphify-out/` o descartarlo para evitar costos innecesarios de tokens en cada `--update`.
+- [x] El reporte sigue advirtiendo "fits in a single context window — you may not need a graph" (corpus 33k palabras). **Decisión**: mantener el grafo, con matices:
+  - El benchmark da **11x menos tokens por query** (~4k tokens vs ~44k del corpus) → conviene para preguntas frecuentes sobre el código.
+  - Cuesta tokens mantenerlo en cada `--update` semántico. Recomendación: usar `/graphify --update` solo cuando cambien archivos, y para cambios de solo código se salta la semántica (sin costo de LLM).
+  - Si el costo de mantenimiento molesta, se puede borrar `graphify-out/` (ya no se necesita para la app) y usar grepping directo.
 
 ## Notas
 
-- El skill de opencode ya está sincronizado a 0.9.32 (SKILL.md + `references/` en `~/.config/opencode/skills/graphify/`). Las próximas sesiones de opencode cargan la versión nueva (con fast-path de query, `--directed`, `--wiki`, GitHub URLs, etc.). La sesión actual aún usa el skill viejo.
+- Skill de opencode sincronizado a 0.9.32 (SKILL.md + `references/` en `~/.config/opencode/skills/graphify/`). Las próximas sesiones usan la versión nueva.
+- `.graphifyignore` (nuevo): excluye `.agents/` y `public/` de futuros scans. Commitearlo junto con la próxima tanda para que el grafo sea reproducible.
+- Para habilitar contabilidad de tokens y extracción semántica automática: `pip install 'graphifyy[gemini]'` + setear `GEMINI_API_KEY` (o `GOOGLE_API_KEY`).
