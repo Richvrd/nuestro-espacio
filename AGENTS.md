@@ -5,6 +5,9 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+## Before making changes — check pendientes.md first
+Before creating, modifying, or adding anything to the system (features, modules, config, tooling, infra), **read `pendientes.md` at the project root first** and resolve or acknowledge every pending item relevant to the change. Never skip this: pending items exist because they affect the correctness or quality of future work (e.g. a stale graphify graph, an unresolved `.opencode/` decision). A change made on top of unaddressed pendientes is likely to reintroduce the same issues.
+
 ## Project
 Private couple's web app (Sarai ♥ Ricardo). All UI text is in Spanish. Features: photo gallery/albums, love letters, memory game, time capsule, and a "time together" counter.
 
