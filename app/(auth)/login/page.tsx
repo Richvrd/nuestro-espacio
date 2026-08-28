@@ -1,6 +1,8 @@
 import { LoginForm } from './LoginForm';
+import { logAcceso } from './actions';
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  await logAcceso(null, null, '/login');
   return (
     <div className="login-page">
       <div className="login-card">

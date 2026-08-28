@@ -5,8 +5,10 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-## Before making changes — check pendientes.md first
-Before creating, modifying, or adding anything to the system (features, modules, config, tooling, infra), **read `pendientes.md` at the project root first** and resolve or acknowledge every pending item relevant to the change. Never skip this: pending items exist because they affect the correctness or quality of future work (e.g. a stale graphify graph, an unresolved `.opencode/` decision). A change made on top of unaddressed pendientes is likely to reintroduce the same issues.
+## Before making changes — check pendientes.md and pendientes_implementar.md first
+Before creating, modifying, or adding anything to the system (features, modules, config, tooling, infra), **read `pendientes.md` and `pendientes_implementar.md` at the project root first** and resolve or advance every pending item relevant to the change. Never skip this: pending items exist because they affect the correctness or quality of future work (e.g. a stale graphify graph, an unresolved `.opencode/` decision). A change made on top of unaddressed pendientes is likely to reintroduce the same issues.
+
+**`pendientes_implementar.md` is the PRIORITY list of pending implementations and their status** — it must be reviewed before executing any change to the whole project, and its completed tasks marked as done after each implementation.
 
 ## Project
 Private couple's web app (Sarai ♥ Ricardo). All UI text is in Spanish. Features: photo gallery/albums, love letters, memory game, time capsule, and a "time together" counter.
@@ -22,6 +24,7 @@ Private couple's web app (Sarai ♥ Ricardo). All UI text is in Spanish. Feature
 - **App Router** with route groups: `(app)/` = protected (Sidebar + ToastProvider + StarField layout), `auth/` = public
 - **Supabase**: `@supabase/ssr` for cookie-based auth; clients at `lib/supabase/client.ts` (browser) and `lib/supabase/server.ts` (server). Auth: login page + OAuth callback. Route protection in `(app)/` layout.
 - **Env**: `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local`
+- **Supabase MCP**: this project uses `supabase_espacio` (project `xcrzztzqbatblxwxsqpn`, same as `NEXT_PUBLIC_SUPABASE_URL`); `supabase_falabella` belongs to another project — ignore it. `vercel_mcp` is also available.
 - **Path alias**: `@/*` maps to project root
 - **Dev LAN access**: `allowedDevOrigins: ['192.168.0.12', '*']` in `next.config.ts`
 - **Server action limit**: `bodySizeLimit: '10mb'` (for image uploads)

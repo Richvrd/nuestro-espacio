@@ -4,6 +4,7 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/useToast';
+import { logAcceso } from './actions';
 
 function EyeIcon({ open }: { open: boolean }) {
   return (
@@ -55,13 +56,16 @@ export function LoginForm() {
         const msg = mapError(authError.message);
         setError(msg);
         toast.error(msg);
+        await logAcceso(email, false, '/login');
       } else {
+        await logAcceso(email, true, '/login');
         router.push('/inicio');
       }
     } catch {
       const msg = 'Algo salió mal, intenta de nuevo';
       setError(msg);
       toast.error(msg);
+      await logAcceso(email, false, '/login');
     } finally {
       setLoading(false);
     }
