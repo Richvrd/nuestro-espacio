@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useToast } from '@/hooks/useToast';
+import { useLoading as useAppLoading } from '@/hooks/useLoading';
 import { loginAction } from './actions';
 
 function EyeIcon({ open }: { open: boolean }) {
@@ -27,23 +28,40 @@ export function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const toast = useToast();
+  const appLoading = useAppLoading();
+  const hideLoading = appLoading.hide;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPwd, setShowPwd] = useState(false);
+
+  useEffect(() => {
+    return () => hideLoading();
+  }, [hideLoading]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    appLoading.show('entrando...');
 
     try {
       const msg = await loginAction(email, password);
       if (msg) {
         setError(msg);
         toast.error(msg);
+        setLoading(false);
+        appLoading.hide();
       }
-    } finally {
+    } catch (err) {
+      const digest = (err as { digest?: unknown } | null)?.digest;
+      if (typeof digest === 'string' && digest.startsWith('NEXT_REDIRECT')) {
+        return;
+      }
+      const msg = 'Algo salió mal, intenta de nuevo';
+      setError(msg);
+      toast.error(msg);
       setLoading(false);
+      appLoading.hide();
     }
   }
 
