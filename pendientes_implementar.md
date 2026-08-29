@@ -47,3 +47,9 @@ marcarla como ✅ Completada.
 ### 8. Verificación final
 - Estado: ✅ Completada
 - `npm run lint`, `npm run build`, advisors sin error, prueba en prod tras deploy.
+
+### 9. Fix: error al hacer login y registro de `exito: true`
+- Estado: ✅ Completada
+- **Problema**: tras login correcto aparecía un error (había que recargar para ver la sesión activa) y nunca se registraban `exito: true` en `accesos`. Causa: `LoginForm.tsx` hacía `signInWithPassword` en el navegador y luego llamaba a la server action `logAcceso(email, true, '/login')`; ese roundtrip con la sesión recién creada se rechazaba a nivel de transporte → caía al `catch` (error visible) y el insert de `exito: true` nunca se ejecutaba.
+- **Solución**: mover el login a una server action `loginAction(email, password)` en `app/(auth)/login/actions.ts` que hace `signInWithPassword`, registra `logAcceso` (true/false) y redirige con `redirect('/inicio')` (patrón oficial de Supabase). `LoginForm.tsx` ya no toca Supabase: solo llama a `loginAction` y muestra el mensaje de error si lo hay.
+- Verificar: `npm run lint`, `npm run build`, prueba manual (login correcto → redirect directo + fila `exito: true`; credenciales incorrectas → mensaje + `exito: false`).

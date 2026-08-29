@@ -1,10 +1,8 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/useToast';
-import { logAcceso } from './actions';
+import { loginAction } from './actions';
 
 function EyeIcon({ open }: { open: boolean }) {
   return (
@@ -32,13 +30,6 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPwd, setShowPwd] = useState(false);
-  const router = useRouter();
-
-  function mapError(msg: string): string {
-    if (msg.includes('Invalid login credentials')) return 'Email o contraseña incorrectos';
-    if (msg.includes('Email not confirmed')) return 'Email no confirmado';
-    return 'Algo salió mal, intenta de nuevo';
-  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -46,26 +37,11 @@ export function LoginForm() {
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (authError) {
-        const msg = mapError(authError.message);
+      const msg = await loginAction(email, password);
+      if (msg) {
         setError(msg);
         toast.error(msg);
-        await logAcceso(email, false, '/login');
-      } else {
-        await logAcceso(email, true, '/login');
-        router.push('/inicio');
       }
-    } catch {
-      const msg = 'Algo salió mal, intenta de nuevo';
-      setError(msg);
-      toast.error(msg);
-      await logAcceso(email, false, '/login');
     } finally {
       setLoading(false);
     }

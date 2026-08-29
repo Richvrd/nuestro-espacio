@@ -1,6 +1,6 @@
 # Pendientes
 
-Seguimiento de pendientes. Última revisión: 2026-08-16.
+Seguimiento de pendientes. Última revisión: 2026-08-29.
 
 ## 1. Reconstruir el grafo de graphify desde cero — ✅ HECHO (2026-08-16)
 
@@ -34,3 +34,12 @@ Seguimiento de pendientes. Última revisión: 2026-08-16.
 - Skill de opencode sincronizado a 0.9.32 (SKILL.md + `references/` en `~/.config/opencode/skills/graphify/`). Las próximas sesiones usan la versión nueva.
 - `.graphifyignore` (nuevo): excluye `.agents/` y `public/` de futuros scans. Commitearlo junto con la próxima tanda para que el grafo sea reproducible.
 - Para habilitar contabilidad de tokens y extracción semántica automática: `pip install 'graphifyy[gemini]'` + setear `GEMINI_API_KEY` (o `GOOGLE_API_KEY`).
+
+## 5. Actualización incremental del grafo — ✅ HECHO (2026-08-29)
+
+- [x] Ejecutado `/graphify --update` tras el commit `90deef0` (feature de registro de accesos en login + RLS en `movies` + `pendientes_implementar.md`).
+- 7 archivos re-extraídos: 4 de código (AST, sin LLM) y 3 docs (semántica): `AGENTS.md`, `pendientes.md`, `pendientes_implementar.md`.
+- **Resultado**: 527 nodos · 1052 edges · 49 comunidades (antes 499/996/54). Diff: +37 nodos, +61 edges, -9 nodos, -5 edges.
+- Nuevos nodos clave: `logAcceso()`, `getAccesoInfo()`, `lib/accesoInfo.ts`, `public.accesos`, "RLS on public.movies", "Supabase MCP: supabase_espacio".
+- Comunidades nuevas etiquetadas: "Login y registro de accesos", "Documentación y arquitectura", "Supabase MCP".
+- `graphify-out/` sigue en `.gitignore` (no se versiona). Nota: el paquete instalado es 0.9.44 mientras el skill sigue en 0.9.32 — considerar `graphify install` en el futuro.
