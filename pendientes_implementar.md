@@ -53,3 +53,10 @@ marcarla como ✅ Completada.
 - **Problema**: tras login correcto aparecía un error (había que recargar para ver la sesión activa) y nunca se registraban `exito: true` en `accesos`. Causa: `LoginForm.tsx` hacía `signInWithPassword` en el navegador y luego llamaba a la server action `logAcceso(email, true, '/login')`; ese roundtrip con la sesión recién creada se rechazaba a nivel de transporte → caía al `catch` (error visible) y el insert de `exito: true` nunca se ejecutaba.
 - **Solución**: mover el login a una server action `loginAction(email, password)` en `app/(auth)/login/actions.ts` que hace `signInWithPassword`, registra `logAcceso` (true/false) y redirige con `redirect('/inicio')` (patrón oficial de Supabase). `LoginForm.tsx` ya no toca Supabase: solo llama a `loginAction` y muestra el mensaje de error si lo hay.
 - Verificar: `npm run lint`, `npm run build`, prueba manual (login correcto → redirect directo + fila `exito: true`; credenciales incorrectas → mensaje + `exito: false`).
+
+### 10. Cierre de sesión por inactividad (2 capas)
+- Estado: ✅ Completada
+- **Doble capa**: (1) cliente `components/shared/SessionTimer.tsx` montado en `app/(app)/layout.tsx` — escucha actividad (mousemove, keydown, click, scroll, touchstart, pointerdown), avisa con modal a 30 s de expirar (cuenta regresiva + "Seguir aquí"/"Cerrar sesión") y al vencer hace `signOut()` + redirect a `/login`; (2) servidor en `lib/supabase/middleware.ts` — cookie `ne_last_activity` (httpOnly, maxAge 1 año) estampada en cada request autenticado; si `ahora - última > timeout` borra cookies `sb-*` y redirige a `/login`. Sin sesión, el middleware limpia la cookie para evitar cierres espurios tras un nuevo login.
+- **Config**: constantes en `lib/constants.ts` → `SESSION_TIMEOUT_MS = 2 * 60 * 1000` (**modo pruebas**, cambiar a `30 * 60 * 1000` cuando lo indique el usuario), `SESSION_WARNING_MS = 30 * 1000`, `INACTIVITY_COOKIE`.
+- **Sin registro en `accesos`** (decisión del usuario).
+- Verificar: `npm run lint` (sin errores nuevos), `npm run build` ✓, prueba manual: 2 min inactivo → modal a los 90 s → cierre + redirect; interactuar resetea.
