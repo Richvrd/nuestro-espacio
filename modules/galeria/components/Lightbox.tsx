@@ -53,7 +53,7 @@ export function Lightbox({ photos, currentIndex, isOpen, onClose, onNavigate }: 
         {photo.url ? (
           <img id="lightbox-img" src={photo.url} alt={photo.caption || 'Foto'} />
         ) : (
-          <div id="lightbox-placeholder" style={{ background: photo.bg_gradient || 'linear-gradient(135deg, #2a1f35, #1a1924)' }}>
+          <div id="lightbox-placeholder" style={{ background: photo.bg_gradient || 'linear-gradient(135deg, #2a2340, #1a1730)' }}>
             {photo.emoji || '📷'}
           </div>
         )}

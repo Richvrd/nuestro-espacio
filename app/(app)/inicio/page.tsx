@@ -120,7 +120,7 @@ function GaleriaContent({ photos, stats }: { photos: any[]; stats: { photos: num
     const p = photos[i];
     cells.push(
       <div key={p.id} className={`foto-cell ${i === 0 ? 'tall' : ''}`}
-        style={p.url ? {} : { background: p.bg_gradient || 'linear-gradient(135deg,#2a1f35,#1a1924)' }}>
+        style={p.url ? {} : { background: p.bg_gradient || 'linear-gradient(135deg,#2a2340,#1a1730)' }}>
         {p.url ? <img src={p.url} alt={p.caption || ''} /> : <span style={{ fontSize: '1.5rem' }}>{p.emoji || '📷'}</span>}
         {p.caption && <div className="foto-cell-overlay">{p.caption}</div>}
       </div>
@@ -143,7 +143,7 @@ function getGaleriaStats(photos: any[], stats: { photos: number; moments: number
   const specialCount = photos.filter(p => p.is_special).length;
   return (
     <div className="galeria-stats-row">
-      <span style={{ fontFamily: 'var(--serif)', fontSize: '1.1rem', color: 'var(--gold)' }}>{stats.photos}</span>
+      <span style={{ fontFamily: 'var(--serif)', fontSize: '1.1rem', color: 'var(--violet)' }}>{stats.photos}</span>
       <span style={{ fontFamily: 'var(--mono)', fontSize: '0.5rem', color: 'var(--dimmed)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>fotos</span>
       {stats.moments > 0 && <><span className="stat-divider-vert" /><span style={{ fontFamily: 'var(--serif)', fontSize: '1.1rem', color: 'var(--rose)' }}>{stats.moments}</span>
         <span style={{ fontFamily: 'var(--mono)', fontSize: '0.5rem', color: 'var(--dimmed)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>especiales</span></>}

@@ -143,13 +143,13 @@ export function PeliculasApp({ initialMovies, currentUserName }: PeliculasAppPro
               <span className="peliculas-stat-label">películas</span>
             </div>
             <div className="peliculas-stat-pill">
-              <span className="peliculas-stat-val" style={{ color: 'var(--gold)' }}>
+              <span className="peliculas-stat-val" style={{ color: 'var(--violet)' }}>
                 {sssCount + sCount}
               </span>
               <span className="peliculas-stat-label">favoritas</span>
             </div>
             <div className="peliculas-stat-pill">
-              <span className="peliculas-stat-val" style={{ color: 'var(--gold)' }}>
+              <span className="peliculas-stat-val" style={{ color: 'var(--violet)' }}>
                 {avgRating}
               </span>
               <span className="peliculas-stat-label">media</span>
@@ -215,7 +215,7 @@ export function PeliculasApp({ initialMovies, currentUserName }: PeliculasAppPro
             <span className="peliculas-stat-card-label">Total películas</span>
           </div>
           <div className="peliculas-stat-card">
-            <span className="peliculas-stat-card-val" style={{ color: 'var(--gold)' }}>
+            <span className="peliculas-stat-card-val" style={{ color: 'var(--violet)' }}>
               {bestRated.length > 0 ? bestRated[0].title : '—'}
             </span>
             <span className="peliculas-stat-card-label">Mejor calificada</span>

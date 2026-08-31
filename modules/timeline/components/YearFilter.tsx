@@ -37,7 +37,7 @@ export function YearFilter({ years, momentCountByYear, selectedYear, onSelect }:
           >
             <div className="yf-planet">
               <div className="yf-ring" />
-              <span style={{ fontFamily: 'var(--mono)', fontSize: '0.5rem', color: 'var(--gold-dim)' }}>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: '0.5rem', color: 'var(--violet-dim)' }}>
                 {String(year).slice(2)}
               </span>
             </div>

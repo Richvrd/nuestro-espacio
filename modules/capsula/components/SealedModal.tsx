@@ -93,7 +93,7 @@ export function SealedModal({ capsule, onClose, onSendToSpace, saving }: SealedM
             <SCBUnit value={diff.s} label="seg" sec />
           </div>
 
-          <p style={{ fontSize: '0.65rem', color: 'var(--gold)' }}>
+          <p style={{ fontSize: '0.65rem', color: 'var(--violet)' }}>
             se abre el {openDateStr} a las {openTimeStr}
           </p>
         </div>

@@ -102,7 +102,7 @@ export function InicioSections({ hero, panels, currentUserName }: InicioSections
               <div className="inicio-panel-inner">
                 <div className="inicio-panel-left">
                   <span className={`inicio-reveal ${isRevealed ? 'visible' : ''}`}
-                    style={{ fontSize: '1.2rem', color: 'var(--gold)' }}>{p.ornament}</span>
+                    style={{ fontSize: '1.2rem', color: 'var(--violet)' }}>{p.ornament}</span>
                   <span className={`inicio-reveal ${isRevealed ? 'visible' : ''}`}
                     style={{ fontFamily: 'var(--mono)', fontSize: '0.5rem', letterSpacing: '0.3em',
                       textTransform: 'uppercase', color: 'var(--muted)' }}>{p.label}</span>
@@ -113,7 +113,7 @@ export function InicioSections({ hero, panels, currentUserName }: InicioSections
                     <a href={p.link.href}
                       className={`inicio-reveal ${isRevealed ? 'visible' : ''}`}
                       style={{ fontFamily: 'var(--mono)', fontSize: '0.55rem', letterSpacing: '0.1em',
-                        color: 'var(--gold)', marginTop: '0.5rem' }}>
+                        color: 'var(--violet)', marginTop: '0.5rem' }}>
                       {p.link.text} →
                     </a>
                   )}

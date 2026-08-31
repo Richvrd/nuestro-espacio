@@ -147,7 +147,7 @@ export function TimelineView({ items, onPhotoClick, onAlbumClick, onToggleSpecia
                   ) : (
                     <div
                       className="photo-placeholder-inner"
-                      style={{ background: featured!.bg_gradient || 'linear-gradient(135deg,#2a1f35,#1a1924)' }}
+                      style={{ background: featured!.bg_gradient || 'linear-gradient(135deg,#2a2340,#1a1730)' }}
                     >
                       {featured!.emoji || '📷'}
                     </div>
@@ -173,7 +173,7 @@ export function TimelineView({ items, onPhotoClick, onAlbumClick, onToggleSpecia
                           ) : (
                             <div
                               className="photo-thumb-placeholder"
-                              style={{ background: p.bg_gradient || 'linear-gradient(135deg,#2a1f35,#1a1924)' }}
+                              style={{ background: p.bg_gradient || 'linear-gradient(135deg,#2a2340,#1a1730)' }}
                             >
                               {p.emoji || '📷'}
                             </div>

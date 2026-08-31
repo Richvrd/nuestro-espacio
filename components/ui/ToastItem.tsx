@@ -3,9 +3,9 @@
 import { Toast } from '@/contexts/ToastContext';
 
 const TYPE_CONFIG = {
-  success: { color: 'var(--gold)', icon: '✦' },
+  success: { color: 'var(--violet)', icon: '✦' },
   error: { color: 'var(--rose)', icon: '✕' },
-  warning: { color: 'var(--teal)', icon: '◆' },
+  warning: { color: 'var(--cyan)', icon: '◆' },
 } as const;
 
 interface ToastItemProps {

@@ -28,11 +28,11 @@ export interface TmdbResult {
 export const RATINGS = ['SSS', 'S', 'A', 'B', 'C', 'D', 'F'] as const;
 
 export const RATING_COLORS: Record<string, string> = {
-  SSS: '#c9a96e',
-  S:   '#c9a96e',
+  SSS: '#a78bfa',
+  S:   '#a78bfa',
   A:   '#7ab58a',
-  B:   '#5a9ba5',
-  C:   '#7a7585',
+  B:   '#67e8f9',
+  C:   '#8d86a8',
   D:   '#b58a7a',
-  F:   '#b8756a',
+  F:   '#f472b6',
 };

@@ -8,7 +8,7 @@ export interface AnniversaryEventHandle {
 
 function createHeartParticle() {
   const symbols = ['♥', '♡', '❤', '💕'];
-  const colors = ['#b8756a', '#c9a96e', '#d4958a', '#d4ba7e'];
+  const colors = ['#f472b6', '#a78bfa', '#f9a8d4', '#c4b5fd'];
   const el = document.createElement('span');
   el.className = 'heart-particle';
   el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
