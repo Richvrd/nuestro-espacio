@@ -19,7 +19,7 @@ export function LoadingOverlay() {
       <div className="loading-orbit">
         <div className="loading-orbit-center" />
         <div className="loading-orbit-ring" />
-        <div className="loading-orbit-dot loading-orbit-dot--violet" />
+        <div className="loading-orbit-dot loading-orbit-dot--coral" />
         <div className="loading-orbit-dot loading-orbit-dot--rose" />
       </div>
       <p className="loading-message">{context.loadingMessage}</p>

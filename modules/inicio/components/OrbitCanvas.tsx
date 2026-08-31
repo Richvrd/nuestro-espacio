@@ -118,22 +118,22 @@ function drawNormal(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx: n
   [[rx * 1.6, ry * 1.6, 0.03], [rx, ry, 0.07], [rx * 0.5, ry * 0.5, 0.04]].forEach(([rxi, ryi, a]) => {
     ctx.beginPath();
     ctx.ellipse(cx, cy, rxi as number, ryi as number, 0, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(167,139,250,${a})`;
+    ctx.strokeStyle = `rgba(242,118,95,${a})`;
     ctx.lineWidth = 0.5;
     ctx.stroke();
   });
 
   // Center glow
   const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 60);
-  cg.addColorStop(0, 'rgba(167,139,250,0.12)');
-  cg.addColorStop(1, 'rgba(167,139,250,0)');
+  cg.addColorStop(0, 'rgba(242,118,95,0.12)');
+  cg.addColorStop(1, 'rgba(242,118,95,0)');
   ctx.beginPath();
   ctx.arc(cx, cy, 60, 0, Math.PI * 2);
   ctx.fillStyle = cg;
   ctx.fill();
   ctx.beginPath();
   ctx.arc(cx, cy, 3, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(167,139,250,0.5)';
+  ctx.fillStyle = 'rgba(242,118,95,0.5)';
   ctx.fill();
 
   // Star 1 (rose)
@@ -144,19 +144,19 @@ function drawNormal(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx: n
     const ta = a1 - i * 0.15;
     ctx.beginPath();
     ctx.arc(cx + Math.cos(ta) * rx, cy + Math.sin(ta) * ry, 1.2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(244,114,182,${0.2 - i * 0.02})`;
+    ctx.fillStyle = `rgba(242,180,138,${0.2 - i * 0.02})`;
     ctx.fill();
   }
   const g1 = ctx.createRadialGradient(s1x, s1y, 0, s1x, s1y, 18);
-  g1.addColorStop(0, 'rgba(244,114,182,0.35)');
-  g1.addColorStop(1, 'rgba(244,114,182,0)');
+  g1.addColorStop(0, 'rgba(242,180,138,0.35)');
+  g1.addColorStop(1, 'rgba(242,180,138,0)');
   ctx.beginPath();
   ctx.arc(s1x, s1y, 18, 0, Math.PI * 2);
   ctx.fillStyle = g1;
   ctx.fill();
   ctx.beginPath();
   ctx.arc(s1x, s1y, 3.5, 0, Math.PI * 2);
-  ctx.fillStyle = '#f472b6';
+  ctx.fillStyle = '#f2b48a';
   ctx.fill();
 
   // Star 2 (gold)
@@ -167,19 +167,19 @@ function drawNormal(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx: n
     const ta = a2 + i * 0.15;
     ctx.beginPath();
     ctx.arc(cx + Math.cos(ta) * rx, cy + Math.sin(ta) * ry, 1.2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(167,139,250,${0.2 - i * 0.02})`;
+    ctx.fillStyle = `rgba(242,118,95,${0.2 - i * 0.02})`;
     ctx.fill();
   }
   const g2 = ctx.createRadialGradient(s2x, s2y, 0, s2x, s2y, 18);
-  g2.addColorStop(0, 'rgba(167,139,250,0.35)');
-  g2.addColorStop(1, 'rgba(167,139,250,0)');
+  g2.addColorStop(0, 'rgba(242,118,95,0.35)');
+  g2.addColorStop(1, 'rgba(242,118,95,0)');
   ctx.beginPath();
   ctx.arc(s2x, s2y, 18, 0, Math.PI * 2);
   ctx.fillStyle = g2;
   ctx.fill();
   ctx.beginPath();
   ctx.arc(s2x, s2y, 3.5, 0, Math.PI * 2);
-  ctx.fillStyle = '#a78bfa';
+  ctx.fillStyle = '#f2765f';
   ctx.fill();
 }
 
@@ -196,9 +196,9 @@ function drawHeartMode(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx
   // Aura pulse in sync
   const auraAlpha = 0.08 + (lub > 0.7 ? 0.2 * (lub - 0.7) / 0.3 : 0);
   const aura = ctx.createRadialGradient(cx, cy, 0, cx, cy, 200 * heartScale);
-  aura.addColorStop(0, `rgba(167,139,250,${auraAlpha})`);
-  aura.addColorStop(0.5, `rgba(244,114,182,${auraAlpha * 0.5})`);
-  aura.addColorStop(1, 'rgba(167,139,250,0)');
+  aura.addColorStop(0, `rgba(242,118,95,${auraAlpha})`);
+  aura.addColorStop(0.5, `rgba(242,180,138,${auraAlpha * 0.5})`);
+  aura.addColorStop(1, 'rgba(242,118,95,0)');
   ctx.beginPath();
   ctx.arc(cx, cy, 200 * heartScale, 0, Math.PI * 2);
   ctx.fillStyle = aura;
@@ -208,7 +208,7 @@ function drawHeartMode(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx
   [[rx * 1.6, ry * 1.6, 0.04], [rx, ry, 0.1], [rx * 0.5, ry * 0.5, 0.05]].forEach(([rxi, ryi, a]) => {
     ctx.beginPath();
     ctx.ellipse(cx, cy, rxi as number, ryi as number, 0, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(167,139,250,${a})`;
+    ctx.strokeStyle = `rgba(242,118,95,${a})`;
     ctx.lineWidth = 0.5;
     if (rxi === rx && ryi === ry) {
       ctx.setLineDash([6, 8]);
@@ -219,18 +219,18 @@ function drawHeartMode(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx
 
   // Center large pulsing heart
   ctx.save();
-  ctx.shadowColor = 'rgba(167,139,250,0.4)';
+  ctx.shadowColor = 'rgba(242,118,95,0.4)';
   ctx.shadowBlur = 30;
   drawHeart(ctx, cx, cy, 42 * heartScale);
-  ctx.fillStyle = 'rgba(167,139,250,0.15)';
+  ctx.fillStyle = 'rgba(242,118,95,0.15)';
   ctx.fill();
   ctx.shadowBlur = 18;
   drawHeart(ctx, cx, cy, 24 * heartScale);
-  ctx.fillStyle = 'rgba(167,139,250,0.3)';
+  ctx.fillStyle = 'rgba(242,118,95,0.3)';
   ctx.fill();
   ctx.shadowBlur = 12;
   drawHeart(ctx, cx, cy, 12 * heartScale);
-  ctx.fillStyle = 'rgba(167,139,250,0.6)';
+  ctx.fillStyle = 'rgba(242,118,95,0.6)';
   ctx.fill();
   ctx.restore();
 
@@ -239,18 +239,18 @@ function drawHeartMode(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx
   const s1x = cx + Math.cos(a1) * rx;
   const s1y = cy + Math.sin(a1) * ry;
   ctx.save();
-  ctx.shadowColor = '#f472b6';
+  ctx.shadowColor = '#f2b48a';
   ctx.shadowBlur = 16;
   for (let i = 0; i < 8; i++) {
     const ta = a1 - i * 0.15;
     const tx = cx + Math.cos(ta) * rx;
     const ty = cy + Math.sin(ta) * ry;
     drawHeart(ctx, tx, ty, 5 - i * 0.3);
-    ctx.fillStyle = `rgba(244,114,182,${0.35 - i * 0.04})`;
+    ctx.fillStyle = `rgba(242,180,138,${0.35 - i * 0.04})`;
     ctx.fill();
   }
   drawHeart(ctx, s1x, s1y, 14);
-  ctx.fillStyle = '#f472b6';
+  ctx.fillStyle = '#f2b48a';
   ctx.fill();
   ctx.restore();
 
@@ -259,18 +259,18 @@ function drawHeartMode(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx
   const s2x = cx + Math.cos(a2) * rx;
   const s2y = cy + Math.sin(a2) * ry;
   ctx.save();
-  ctx.shadowColor = '#a78bfa';
+  ctx.shadowColor = '#f2765f';
   ctx.shadowBlur = 16;
   for (let i = 0; i < 8; i++) {
     const ta = a2 + i * 0.15;
     const tx = cx + Math.cos(ta) * rx;
     const ty = cy + Math.sin(ta) * ry;
     drawHeart(ctx, tx, ty, 5 - i * 0.3);
-    ctx.fillStyle = `rgba(167,139,250,${0.35 - i * 0.04})`;
+    ctx.fillStyle = `rgba(242,118,95,${0.35 - i * 0.04})`;
     ctx.fill();
   }
   drawHeart(ctx, s2x, s2y, 14);
-  ctx.fillStyle = '#a78bfa';
+  ctx.fillStyle = '#f2765f';
   ctx.fill();
   ctx.restore();
 }

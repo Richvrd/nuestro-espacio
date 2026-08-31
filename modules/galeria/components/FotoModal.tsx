@@ -63,7 +63,7 @@ export function FotoModal({ photo, onClose, onEdit, onDelete }: FotoModalProps) 
         <div className="foto-modal-img-wrap">
           {photo.url
             ? <img src={photo.url} alt={photo.title} className="foto-modal-img" />
-            : <div className="foto-modal-placeholder" style={{ background: photo.bg_gradient || 'linear-gradient(135deg,#2a2340,#1a1730)' }}>{photo.emoji || '📷'}</div>
+            : <div className="foto-modal-placeholder" style={{ background: photo.bg_gradient || 'linear-gradient(135deg,#3a2b20,#261c14)' }}>{photo.emoji || '📷'}</div>
           }
         </div>
 

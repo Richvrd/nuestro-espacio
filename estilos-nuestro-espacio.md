@@ -4,7 +4,7 @@ Documentación de referencia de los estilos, colores, tipografías, tamaños, es
 
 > **Propósito**: que cualquier IA o desarrollador entienda a la perfección el sistema de estilos y tecnologías sin necesidad de leer los archivos fuente.
 
-> **Tema actual — «Aurora»** (rama `diseño`): rediseño completo del tema. Paleta *Northern Lights* (violeta/rosa/cian sobre fondo índigo) y tipografías *Great Vibes + Cormorant Garamond + Source Serif 4 + JetBrains Mono*. Los nombres de token legacy `--gold`/`--teal` se renombraron a `--violet`/`--cyan`; `--rose` conserva su nombre (sigue siendo rosa).
+> **Tema actual — «Atardecer»** (rama `diseño`): rediseño completo del tema. Paleta *Atardecer* (coral/melocotón/dorado sobre fondo marrón cálido) y tipografías *Great Vibes + Cormorant Garamond + Source Serif 4 + JetBrains Mono*. Tokens de acento: `--coral` (principal), `--rose` (melocotón) y `--gold` (dorado).
 
 ---
 
@@ -28,51 +28,51 @@ Definidas en las líneas 1–30 de `app/globals.css`. Todo el tema del sitio se 
 
 ### 2.1 Colores
 
-**Fondo / superficies (escala oscura, neutros fríos):**
+**Fondo / superficies (escala oscura, neutros cálidos):**
 
 | Variable | Valor | Uso |
 |---|---|---|
-| `--bg` | `#0a0813` | Fondo general de la app (índigo casi negro) |
-| `--surface` | `#14111f` | Superficies elevadas: sidebar, modales, cajas |
-| `--card` | `#1a1730` | Tarjetas, inputs, contenedores de contenido |
-| `--card-high` | `#232042` | Tarjetas elevadas/hover, menús desplegables |
+| `--bg` | `#17100c` | Fondo general de la app (marrón casi negro) |
+| `--surface` | `#201712` | Superficies elevadas: sidebar, modales, cajas |
+| `--card` | `#261c14` | Tarjetas, inputs, contenedores de contenido |
+| `--card-high` | `#2e231a` | Tarjetas elevadas/hover, menús desplegables |
 
 **Bordes:**
 
 | Variable | Valor | Uso |
 |---|---|---|
 | `--border` | `rgba(255,255,255,0.07)` | Bordes normales / divisores |
-| `--border-hi` | `rgba(167,139,250,0.25)` | Bordes destacados (hover, tarjetas importantes, modales) |
+| `--border-hi` | `rgba(242,118,95,0.25)` | Bordes destacados (hover, tarjetas importantes, modales) |
 
 **Texto:**
 
 | Variable | Valor | Uso |
 |---|---|---|
-| `--text` | `#f2effa` | Texto principal (blanco lavanda) |
-| `--muted` | `#8d86a8` | Texto secundario, metadatos, labels |
-| `--dimmed` | `#4a4470` | Texto terciario / deshabilitado, placeholders |
+| `--text` | `#f7f1e4` | Texto principal (blanco hueso) |
+| `--muted` | `#a89a8a` | Texto secundario, metadatos, labels |
+| `--dimmed` | `#6b5d4f` | Texto terciario / deshabilitado, placeholders |
 
-**Acentos (paleta «Aurora» — Northern Lights):**
+**Acentos (paleta «Atardecer»):**
 
 | Variable | Valor | Uso |
 |---|---|---|
-| `--violet` | `#a78bfa` | **Color principal**. Acentos, botones primarios, activos, valores numéricos, fecha/destacados (antes `--gold`) |
-| `--violet-dim` | `#6d5bb0` | Violeta atenuado (hovers, decoración sutil) |
-| `--rose` | `#f472b6` | Acento secundario (rosa). Errores, "enamorados", badges de no leído, categorías |
-| `--rose-dim` | `#9d3d6b` | Rosa atenuado |
-| `--cyan` | `#67e8f9` | Cian. Módulo cápsulas/cosmos, categoría "viaje" (antes `--teal`) |
+| `--coral` | `#f2765f` | **Color principal**. Acentos, botones primarios, activos, valores numéricos, fecha/destacados (antes `--violet`) |
+| `--coral-dim` | `#b04a35` | Coral atenuado (hovers, decoración sutil) |
+| `--rose` | `#f2b48a` | Acento secundario (melocotón). Errores, "enamorados", badges de no leído, categorías |
+| `--rose-dim` | `#a56a4e` | Melocotón atenuado |
+| `--gold` | `#e8c56a` | Dorado. Módulo cápsulas/cosmos, categoría "viaje" (antes `--cyan`) |
 
 **Otros colores en uso (valores directos, sin token):**
 
 | Contexto | Valor |
 |---|---|
-| Texto sobre fondo violeta (botones primarios) | `#0a0813` |
-| Hover de botón primario (violeta claro) | `#c4b5fd` |
-| Categoría timeline "hito" | `#c084fc` (púrpura) |
-| Categoría timeline "primer vez" | `#f472b6` (= `--rose`) |
-| Sombra de texto/glow en números | `color-mix(in srgb, var(--violet) 30%, transparent)` |
-| Gradientes radiales decorativos | `rgba(167,139,250,0.04–0.08)`, `rgba(244,114,182,0.07)`, `rgba(103,232,249,0.04)` |
-| Overlays de modales | `rgba(10,8,19,0.85)` con `backdrop-filter: blur(8–12px)` |
+| Texto sobre fondo coral (botones primarios) | `#17100c` |
+| Hover de botón primario (coral claro) | `#ff8f7a` |
+| Categoría timeline "hito" | `#d9a066` (arena/dorado apagado) |
+| Categoría timeline "primer vez" | `#f2b48a` (= `--rose`) |
+| Sombra de texto/glow en números | `color-mix(in srgb, var(--coral) 30%, transparent)` |
+| Gradientes radiales decorativos | `rgba(242,118,95,0.04–0.08)`, `rgba(242,180,138,0.07)`, `rgba(232,197,106,0.04)` |
+| Overlays de modales | `rgba(20,14,10,0.85)` con `backdrop-filter: blur(8–12px)` |
 
 ### 2.2 Tipografías (font stacks)
 
@@ -115,7 +115,7 @@ No hay escala formal; el patrón recurrente es: **títulos serif grandes + label
 |---|---|---|---|
 | Título de página | serif | `2.2rem` | `line-height: 1` |
 | Título hero inicio | serif | `clamp(2.5rem, 5vw, 4.5rem)` | |
-| Números del contador (hero) | serif | `clamp(2.8rem, 6vw, 4.5rem)` | color violeta, text-shadow glow |
+| Números del contador (hero) | serif | `clamp(2.8rem, 6vw, 4.5rem)` | color coral, text-shadow glow |
 | Números del contador (card) | serif | `2.8rem` | |
 | Números stats bar / galería | serif | `1.5–1.6rem` | |
 | Sujeto carta (reader) | serif | `2rem` | |
@@ -155,9 +155,9 @@ body (fondo --bg, overflow hidden, sin scroll)
 
 ### 4.1 Sidebar (`#sidebar`)
 - Ancho `220px`, `height: 100vh`, fondo `--surface`, `border-right: 1px solid var(--border)`.
-- Nombre de la pareja (`.sidebar-couple`): serif `1rem`, texto con **gradiente violeta→rosa→violeta animado** (`background-clip: text` + `grad-shimmer 4s`).
-- `.sidebar-since` / `.sidebar-subtitle`: mono minúsculo, `letter-spacing` amplio, color `--muted`/`--violet`.
-- `.nav-item`: `0.85rem`, color `--muted`; hover → `--text` + fondo `rgba(255,255,255,0.03)`; `.active` → `--violet` + fondo `rgba(167,139,250,0.06)` + **barra izquierda de 3px violeta**.
+- Nombre de la pareja (`.sidebar-couple`): script `1.35rem`, texto con **gradiente coral→melocotón→coral animado** (`background-clip: text` + `grad-shimmer 4s`).
+- `.sidebar-since` / `.sidebar-subtitle`: mono minúsculo, `letter-spacing` amplio, color `--muted`/`--coral`.
+- `.nav-item`: `0.85rem`, color `--muted`; hover → `--text` + fondo `rgba(255,255,255,0.03)`; `.active` → `--coral` + fondo `rgba(242,118,95,0.06)` + **barra izquierda de 3px coral**.
 - `.nav-badge`: pill mono `0.5rem`, fondo `--rose-dim`, texto `--rose`.
 
 ### 4.2 Página
@@ -172,8 +172,8 @@ body (fondo --bg, overflow hidden, sin scroll)
 ### 5.1 Botones (`.btn`)
 | Variante | Fondo | Texto | Borde | Hover |
 |---|---|---|---|---|
-| `.btn-primary` | `--violet` | `#0a0813` | — | `#c4b5fd`, `translateY(-1px)`, sombra `0 4px 20px rgba(167,139,250,0.3)` |
-| `.btn-ghost` | transparente | `--muted` | `1px solid var(--border)` | `--text`, borde `--border-hi`, fondo `rgba(167,139,250,0.04)` |
+| `.btn-primary` | `--coral` | `#17100c` | — | `#ff8f7a`, `translateY(-1px)`, sombra `0 4px 20px rgba(242,118,95,0.3)` |
+| `.btn-ghost` | transparente | `--muted` | `1px solid var(--border)` | `--text`, borde `--border-hi`, fondo `rgba(242,118,95,0.04)` |
 
 Tamaño: `padding: 0.55rem 1.1rem`, mono `0.7rem`, `letter-spacing: 0.1em`, `border-radius: var(--radius)`. Variante `.btn-sm` → `padding: 0.35rem 0.7rem`, `0.6rem`.
 
@@ -188,8 +188,8 @@ Fondo `--card`, borde `1px solid var(--border)`, `border-radius: var(--radius)`,
 
 ### 5.4 Formularios
 - `.form-label`: mono `0.6rem`, uppercase, `--muted`, letter-spacing 0.15em.
-- `.form-input` / inputs: fondo `--card`, borde `--border`, `radius: 10px`, body `0.85rem`, `:focus` → borde `--violet`. Placeholder → `--dimmed`.
-- `.form-error`: texto `--rose` sobre fondo `rgba(244,114,182,0.08)`.
+- `.form-input` / inputs: fondo `--card`, borde `--border`, `radius: 10px`, body `0.85rem`, `:focus` → borde `--coral`. Placeholder → `--dimmed`.
+- `.form-error`: texto `--rose` sobre fondo `rgba(242,180,138,0.08)`.
 - Estados: `.spinner` (12px, borde white .2, `--text`), `.btn-loading`, `.modal-loading` (opacity .7), `.file-drop-disabled` (opacity .5).
 
 ### 5.5 Toasts (`components/ui/ToastContainer`)
@@ -207,33 +207,33 @@ Fondo `--card`, borde `1px solid var(--border)`, `border-radius: var(--radius)`,
 ### 6.1 Inicio (`(app)/inicio`)
 - **Rediseño scroll-snap**: `#page-home:has(.inicio-scroll-wrap)` → flex column sin scroll propio; `.inicio-scroll-wrap` con `scroll-snap-type: y mandatory`.
 - `.inicio-panel`: `100vh`, centrado, con overlay radial sutil (`rgba(8,7,16,0.55)`) para que el starfield se transparente.
-- `.inicio-section-tag`: mono `0.5rem` uppercase, letter-spacing 0.4em, `--dimmed`, con línea de 20px `--violet-dim`.
+- `.inicio-section-tag`: mono `0.5rem` uppercase, letter-spacing 0.4em, `--dimmed`, con línea de 20px `--coral-dim`.
 - `.inicio-panel-inner`: grid `1fr 1.6fr`, gap `5rem`, max-width 960px.
 - `.inicio-reveal`: entrada escalonada (opacity 0 → 1, translateY 20px → 0, delays 0.08s incrementales).
-- `.inicio-dot-nav`: navegación por puntos, fixed derecha; `.active` → barra violeta 18px.
+- `.inicio-dot-nav`: navegación por puntos, fixed derecha; `.active` → barra coral 18px.
 - `.inicio-galeria-grid`: grid `1.4fr 1fr` × 2 filas, `height: 380px`, primera foto `grid-row: span 2`.
 - `.inicio-moment-card`, `.inicio-letter-item` (hover → borde izquierdo 3px `--rose`), `.inicio-capsule-card` (ornamento decorativo en esquina), `.skeleton` (shimmer).
 
 ### 6.2 Galería (`galeria`)
 - `.gallery-grid`: `repeat(auto-fill, minmax(180px, 1fr))`, gap `1.2rem`.
-- `.photo-card`: `aspect-ratio: 1`, **ligera rotación** (0.5deg / -0.8deg en `.odd`) estilo polaroid; hover → `translateY(-4px) scale(1.02)` + sombra violeta.
+- `.photo-card`: `aspect-ratio: 1`, **ligera rotación** (0.5deg / -0.8deg en `.odd`) estilo polaroid; hover → `translateY(-4px) scale(1.02)` + sombra coral.
 - `.photo-overlay`: gradiente inferior `rgba(12,11,16,0.85)` visible en hover con caption + fecha.
 - **Álbumes como naipes** (`.album-stack`): dos capas superpuestas desplazadas 7px (trasera arriba-derecha, delantera abajo-izquierda).
-- `.upload-zone`: `aspect-ratio: 1`, borde dashed `--border-hi`, hover → `--violet`.
-- Stats (`.gallery-stats-row`): valores serif `1.5rem` violeta con glow `rgba(167,139,250,0.25)`.
+- `.upload-zone`: `aspect-ratio: 1`, borde dashed `--border-hi`, hover → `--coral`.
+- Stats (`.gallery-stats-row`): valores serif `1.5rem` coral con glow `rgba(242,118,95,0.25)`.
 - Filtros (`.filter-chip`): pills radius 20px; activo → `--rose`.
 
 ### 6.3 Cápsulas (`capsula`)
 - `.capsulas-grid`: `minmax(240px, 1fr)`, gap 1rem.
-- `.capsula-card`: base como `.card`; `.sellada` → borde `rgba(167,139,250,0.15)` + gradiente radial sutil; `.abierta` → borde `0.35` + fondo `linear-gradient(135deg, #1a1730, #201d38)`.
-- `.capsula-card.just-opened`: animación `just-opened` (pulso de brillo violeta 1.8s).
-- Countdowns: `.cdc-val` serif `1.3rem` violeta (segundos en `--violet-dim`); grande en modal `.scb-val` `1.8rem`.
-- Reader: `.capsule-reader-body` con `border-left: 2px solid var(--violet-dim)`.
-- Cosmos (`.cosmos-*`): acento `--cyan` (cian). Items list con hover `rgba(103,232,249,0.25)`. Botones `.btn-cosmos`, `.btn-send-space`, `.btn-restore`.
+- `.capsula-card`: base como `.card`; `.sellada` → borde `rgba(242,118,95,0.15)` + gradiente radial sutil; `.abierta` → borde `0.35` + fondo `linear-gradient(135deg, #261c14, #2b2019)`.
+- `.capsula-card.just-opened`: animación `just-opened` (pulso de brillo coral 1.8s).
+- Countdowns: `.cdc-val` serif `1.3rem` coral (segundos en `--coral-dim`); grande en modal `.scb-val` `1.8rem`.
+- Reader: `.capsule-reader-body` con `border-left: 2px solid var(--coral-dim)`.
+- Cosmos (`.cosmos-*`): acento `--gold` (dorado). Items list con hover `rgba(232,197,106,0.25)`. Botones `.btn-cosmos`, `.btn-send-space`, `.btn-restore`.
 
 ### 6.4 Cartas (`cartas`)
 - **Master-detail**: `.cartas-layout` grid `340px 1fr`, altura completa, sin scroll de página.
-- Sidebar de lista: búsqueda, tabs (`.cartas-tab.active` → fondo `--card`, texto `--violet`), items con `border-bottom`, `.selected` → `border-left: 2px solid var(--violet)`.
+- Sidebar de lista: búsqueda, tabs (`.cartas-tab.active` → fondo `--card`, texto `--coral`), items con `border-bottom`, `.selected` → `border-left: 2px solid var(--coral)`.
 - Indicadores: `.mood-dot` (estado de ánimo, 6px), `.cartas-unread-dot` (6px `--rose`).
 - Reader: `.cartas-reader-subject` serif `2rem`; `.unread` → `border-left: 3px solid var(--rose)`. Cuerpo `line-height: 2`, `color: rgba(237,232,218,0.85)`.
 - Composer: overlay `rgba(8,7,16,0.85)` + blur 8px; panel `min(620px, 96vw)`, radius 16px, animación `cartasComposerIn`.
@@ -242,15 +242,15 @@ Fondo `--card`, borde `1px solid var(--border)`, `border-radius: var(--radius)`,
 ### 6.5 Timeline (`timeline`)
 - Eje central: `.timeline::before` línea de 1px vertical con gradiente `--dimmed`, `left: 50%`.
 - Partículas flotantes en el eje (`.tp`, animación `float-up`).
-- **Filtro por años con planetas** (`.yf-planet`): círculo 52px con gradiente radial `#2a2548 → #100e1c`, anillo 3D `rotateX(72deg)`; activo → glow violeta.
+- **Filtro por años con planetas** (`.yf-planet`): círculo 52px con gradiente radial `#3a2b20 → #16110c`, anillo 3D `rotateX(72deg)`; activo → glow coral.
 - Separador de año: planeta 80px sobre la línea (`.year-planet-core-tl` 52px).
 - Items alternados `.tl-item` grid `1fr 60px 1fr` (izq/der con connector de 2rem).
 - **Nodos por intensidad**: `.node-normal` 12px, `.node-high` 18px con pulso, `.node-vhigh` 24px con anillo expansivo.
-- **Cards por intensidad**: gradientes de fondo y border violeta progresivos; badges `.badge-high`/`.badge-vhigh`.
-- **Categorías** (`.cat-*`): `primer-vez`=rosa, `viaje`=cian, `celebracion`=violeta, `cotidiano`=muted, `hito`=púrpura `#c084fc`.
+- **Cards por intensidad**: gradientes de fondo y border coral progresivos; badges `.badge-high`/`.badge-vhigh`.
+- **Categorías** (`.cat-*`): `primer-vez`=melocotón, `viaje`=dorado, `celebracion`=coral, `cotidiano`=muted, `hito`=arena `#d9a066`.
 - Vistas `.tl-view-wrapper.compact` (colapsa descripción/acciones con max-height) y `.expanded`.
-- Vista por meses: `.month-header` con línea degradada `--violet-dim → transparent`, `.month-name` serif itálica `1.15rem` violeta.
-- Foto destacada (`.featured-photo`): `aspect-ratio: 3/4`, hover scale 1.015, badge `--violet`, overlay gradiente.
+- Vista por meses: `.month-header` con línea degradada `--coral-dim → transparent`, `.month-name` serif itálica `1.15rem` coral.
+- Foto destacada (`.featured-photo`): `aspect-ratio: 3/4`, hover scale 1.015, badge `--coral`, overlay gradiente.
 - **Responsive**: eje a la izquierda (`left: 24px`), grid `48px 1fr`.
 
 ### 6.6 Películas (`peliculas`)
@@ -263,7 +263,7 @@ Fondo `--card`, borde `1px solid var(--border)`, `border-radius: var(--radius)`,
 
 ### 6.7 Música (`musica`)
 - Landing placeholder: vinilo giratorio (`.vinyl-disc` 200px, animación `spin-disc` 4s, label central con iniciales + corazón rosa), título serif `2rem`, notas flotantes animadas.
-- **Reproductor** (en sidebar): `.audio-player` con track info, seek bar de 3px con thumb violeta 10px, botones circulares 28px, control de volumen. En móvil: `.ap-mobile-trigger` (botón flotante 44px) + `.ap-mobile-overlay` con panel bottom-sheet.
+- **Reproductor** (en sidebar): `.audio-player` con track info, seek bar de 3px con thumb coral 10px, botones circulares 28px, control de volumen. En móvil: `.ap-mobile-trigger` (botón flotante 44px) + `.ap-mobile-overlay` con panel bottom-sheet.
 
 ### 6.8 Juegos (`juegos`)
 - Scaffold únicamente (sin componentes, sin estilos propios).
@@ -271,8 +271,8 @@ Fondo `--card`, borde `1px solid var(--border)`, `border-radius: var(--radius)`,
 ### 6.9 Login (`(auth)/login`)
 - `.login-page`: centrado, con gradiente radial `rgba(8,7,16,0.65)` sobre el starfield.
 - `.login-card`: `max-width: 420px`, fondo `--card`, borde `--border-hi`, **radius 18px**, padding `3rem 2.5rem 2.5rem`, sombra multi-capa, entrada `loginCardEnter` (0.9s, cubic-bezier(0.16,1,0.3,1)) con delays escalonados (ornamento 0.1s, título 0.2s, tagline 0.3s).
-- Inputs: fondo `--surface`, `caret-color: var(--violet)`, `:focus` → borde `--border-hi` + ring `0 0 0 3px rgba(167,139,250,0.08)` + **línea animada debajo** (`.login-input-line`, scaleX 0→1).
-- Botón: violeta `0.7rem` uppercase letter-spacing 0.25em; hover `#c4b5fd`.
+- Inputs: fondo `--surface`, `caret-color: var(--coral)`, `:focus` → borde `--border-hi` + ring `0 0 0 3px rgba(242,118,95,0.08)` + **línea animada debajo** (`.login-input-line`, scaleX 0→1).
+- Botón: coral `0.7rem` uppercase letter-spacing 0.25em; hover `#ff8f7a`.
 - Errores: `.login-error` con **animación shake** (`loginErrorShake`).
 - Responsive <480px: card padding `2.5rem 1.5rem 2rem`, radius 14px.
 
@@ -324,7 +324,7 @@ Solo existen dos breakpoints:
 ### 8.1 `@media (max-width: 768px)` — principal
 - `--sidebar: 0px`; el **sidebar se convierte en bottom-nav** fijo (`position: fixed; bottom: 0`, altura auto, `z-index: 50`).
 - Se ocultan `.sidebar-top`, `.sidebar-bottom`, `.nav-section`; los items van en **columna** con icono arriba, texto `0.6rem` centrado.
-- `.nav-item.active::before`: barra violeta arriba de 100% × 2px (en vez de barra lateral).
+- `.nav-item.active::before`: barra coral arriba de 100% × 2px (en vez de barra lateral).
 - `#main` con `padding-bottom: 70px` y `height: calc(100vh - 70px)`.
 - `.page` padding `1.5rem`.
 - Grillas → 1 columna: `.home-grid`, `.capsulas-grid`, `.form-row` (column).
@@ -347,15 +347,15 @@ Solo existen dos breakpoints:
 
 - **Textura noise** (`body::before`): SVG `feTurbulence` embebido como data-URI, `opacity: 0.04`, fijo sobre toda la app (`z-index: 9998`).
 - **Starfield** (`#starfield` + `.s`): estrellas blancas animadas con `--d`, `--lo`, `--hi`, `--dl` por estrella.
-- **Estrellas fugaces** (`.shooting-star`): `z-index: 1`, con cabeza brillante `rgba(235,230,255,0.9)` y glow.
-- **Scrollbar**: ancho 5px, thumb `--violet-dim` (hover `--violet`), track transparente.
+- **Estrellas fugaces** (`.shooting-star`): `z-index: 1`, con cabeza brillante `rgba(255,236,205,0.9)` y glow.
+- **Scrollbar**: ancho 5px, thumb `--coral-dim` (hover `--coral`), track transparente.
 - **Evento de aniversario**: supernova overlay, ondas de choque, corazones flotantes.
 
 ---
 
 ## 10. Reglas para tocar estilos (IMPORTANTE)
 
-1. **Siempre** usar las variables CSS; no hardcodear colores/tipografías salvo los valores documentados arriba (hovers de violeta, text on violeta, gradientes decorativos).
+1. **Siempre** usar las variables CSS; no hardcodear colores/tipografías salvo los valores documentados arriba (hovers de coral, text on coral, gradientes decorativos).
 2. **Un solo archivo de estilos**: todo se agrega a `app/globals.css`. NO usar Tailwind en templates (instalado pero desaconsejado). NO editar `styles/tokens.css` (obsoleto).
 3. Títulos → `var(--serif)` weight 400. Labels/metadatos/fechas → `var(--mono)` uppercase con letter-spacing. Cuerpo → `var(--body)` weight 300.
 4. **Toda** modificación visual debe incluir su contraparte en `@media (max-width: 768px)`.
@@ -371,6 +371,6 @@ Solo existen dos breakpoints:
 - **Framework**: Next.js 16.2.6 (App Router) + React 19.2.4.
 - **Build**: TypeScript 5, ESLint 9 (`next/core-web-vitals`).
 - **Backend/DB**: Supabase (auth por cookies `@supabase/ssr`, Postgres con RLS, storage para fotos).
-- **Otros de UI**: `nextjs-toploader` (barra de progreso superior, color `var(--violet)`, 2px).
+- **Otros de UI**: `nextjs-toploader` (barra de progreso superior, color `var(--coral)`, 2px).
 - **Imágenes**: compresión client-side WebP (máx 1920px, ~200–400KB) en `lib/compressImage.ts`.
 - **Patrón de componentes**: CSS classes globales con nombres BEM-lite (`bloque-elemento` o prefijo de módulo `capsula-`, `cartas-`, `tl-`, `pelicula-`); los módulos importan sus componentes desde `modules/<modulo>/`.

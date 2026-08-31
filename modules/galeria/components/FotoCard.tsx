@@ -26,7 +26,7 @@ export function FotoCard({ photo, index, onOpen }: FotoCardProps) {
     <div
       className={`photo-card ${index % 2 === 0 ? '' : 'odd'}`}
       onClick={onOpen}
-      style={{ '--stagger-i': index, background: photo.bg_gradient || 'linear-gradient(135deg,#2a2340,#1a1730)' } as React.CSSProperties}
+      style={{ '--stagger-i': index, background: photo.bg_gradient || 'linear-gradient(135deg,#3a2b20,#261c14)' } as React.CSSProperties}
     >
       <div className="photo-thumb-placeholder">{photo.emoji || '📷'}</div>
       {photo.is_special && <div className="special-badge">★</div>}

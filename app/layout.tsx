@@ -25,7 +25,7 @@ export default function RootLayout({
       </head>
       <body>
         <NextTopLoader
-          color="var(--violet, #a78bfa)"
+          color="var(--coral, #f2765f)"
           initialPosition={0.08}
           crawlSpeed={200}
           height={2}
@@ -33,7 +33,7 @@ export default function RootLayout({
           showSpinner={false}
           easing="ease"
           speed={200}
-          shadow="0 0 10px rgba(167,139,250,0.4), 0 0 5px rgba(167,139,250,0.2)"
+          shadow="0 0 10px rgba(242,118,95,0.4), 0 0 5px rgba(242,118,95,0.2)"
         />
         <ToastProvider>
           <LoadingProvider>
